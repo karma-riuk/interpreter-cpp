@@ -67,3 +67,4 @@ $(BIN_DIR):
 clean:
     @echo "🧹 Cleaning build artifacts"
     @rm -rf $(OBJ_DIR) $(BIN_DIR)
+
