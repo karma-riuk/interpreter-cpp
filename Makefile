@@ -1,70 +1,74 @@
-# ────────────────────────────────────
-# Compiler and flags
-CXX	  := g++
-CXXFLAGS := -Wall -Werror -I./include
-
-# ────────────────────────────────────
-# Paths
+# -------------------------------------------------------------------
+# Project‐wide settings
+# -------------------------------------------------------------------
+CXX       := g++
+CXXFLAGS  := -std=c++17 -Wall -Wextra -Iinclude -Isrc -MMD -MP
+LDFLAGS   :=
 SRC_DIR   := src
-TEST_SRC  := test/test.cpp
-REPL_SRC  := $(SRC_DIR)/main.cpp
+TEST_DIR  := test
+BUILD_DIR := build
+OBJ_DIR   := $(BUILD_DIR)/objs
+BIN_DIR   := $(BUILD_DIR)/bin
 
-OBJ_DIR   := build/obj
-BIN_DIR   := build/bin
+# -------------------------------------------------------------------
+# Source & object lists
+# -------------------------------------------------------------------
+SRC_CPP    := $(shell find $(SRC_DIR)  -name '*.cpp')
+TEST_CPP   := $(shell find $(TEST_DIR) -name '*.cpp')
+OBJ        := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_CPP))
+TEST_OBJ   := $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/test/%.o,$(TEST_CPP))
+DEPFILES   := $(OBJ:.o=.d) $(TEST_OBJ:.o=.d)
 
-# ────────────────────────────────────
-# Source listings
-# All .cpp under src/, but exclude your REPL main
-LIB_SRCS := $(filter-out $(REPL_SRC),$(shell find $(SRC_DIR) -name '*.cpp'))
-
-# Mirror src/.../*.cpp → build/obj/src/.../*.o
-LIB_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/$(SRC_DIR)/%.o,$(LIB_SRCS))
+# Identify your “real” main.cpp so we can exclude it from tests
+MAIN_SRC        := $(SRC_DIR)/main.cpp
+MAIN_OBJ        := $(MAIN_SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+SRC_OBJS_NO_MAIN := $(filter-out $(MAIN_OBJ),$(OBJ))
 
 # Binaries
-TEST_BIN := $(BIN_DIR)/tests
-REPL_BIN := $(BIN_DIR)/repl
+TARGET        := $(BIN_DIR)/monkey
+TEST_TARGET   := $(BIN_DIR)/monkey_tests
 
-# ────────────────────────────────────
-# Default target: build & run tests
-all: test
+# -------------------------------------------------------------------
+# Top‐level rules
+# -------------------------------------------------------------------
+.PHONY: all clean monkey tests
+all: $(TARGET) $(TEST_TARGET)
 
-# ─ Link test runner (test.cpp defines main via DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
-$(TEST_BIN): $(LIB_OBJS) | $(BIN_DIR)
-	@echo "⏳ Linking tests..."
-	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(LIB_OBJS) -o $@
+clean:
+	@rm -rf $(BUILD_DIR)
 
-# ─ Link REPL
-$(REPL_BIN): $(LIB_OBJS) | $(BIN_DIR)
-	@echo "🚀 Linking REPL..."
-	$(CXX) $(CXXFLAGS) $(REPL_SRC) $(LIB_OBJS) -o $@
+# -------------------------------------------------------------------
+# Build & run
+# -------------------------------------------------------------------
+monkey: $(TARGET)
+	@$(TARGET)
 
-# ─ Compile each library .cpp → mirrored .o
-$(OBJ_DIR)/$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@echo "🛠  Compiling $<"
-	@mkdir -p $(dir $@)
+tests: $(TEST_TARGET)
+	@$(TEST_TARGET) $(if $(TEST),--test-case=$(TEST))
+
+# -------------------------------------------------------------------
+# Link binaries
+# -------------------------------------------------------------------
+$(TARGET): $(OBJ)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(LDFLAGS) $^ -o $@
+
+$(TEST_TARGET): $(SRC_OBJS_NO_MAIN) $(TEST_OBJ)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(LDFLAGS) $^ -o $@
+
+# -------------------------------------------------------------------
+# Compile rules
+# -------------------------------------------------------------------
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# ────────────────────────────────────
-# Run or launch targets
-.PHONY: test repl clean all
+$(OBJ_DIR)/test/%.o: $(TEST_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: $(TEST_BIN)
-	@echo "\n✅ Running tests..."
-	@$(TEST_BIN)
-	# @$(TEST_BIN) $(if $(TESTCASE),--test-case=$(TESTCASE))
-
-repl: $(REPL_BIN)
-	@echo "\n🔧 Starting REPL..."
-	@$(REPL_BIN)
-
-# ────────────────────────────────────
-# Ensure bin/ exists before linking
-$(BIN_DIR):
-	@mkdir -p $@
-
-# ────────────────────────────────────
-# Clean up everything
-clean:
-	@echo "🧹 Cleaning build artifacts"
-	@rm -rf $(OBJ_DIR) $(BIN_DIR)
-
+# -------------------------------------------------------------------
+# Auto‐include dependencies
+# -------------------------------------------------------------------
+-include $(DEPFILES)
