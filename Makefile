@@ -1,7 +1,7 @@
 # ────────────────────────────────────
 # Compiler and flags
-CXX      := g++
-CXXFLAGS := -Wall -WError -I./include
+CXX	  := g++
+CXXFLAGS := -Wall -Werror -I./include
 
 # ────────────────────────────────────
 # Paths
@@ -30,41 +30,41 @@ all: test
 
 # ─ Link test runner (test.cpp defines main via DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
 $(TEST_BIN): $(LIB_OBJS) | $(BIN_DIR)
-    @echo "⏳ Linking tests..."
-    $(CXX) $(CXXFLAGS) $(TEST_SRC) $(LIB_OBJS) -o $@
+	@echo "⏳ Linking tests..."
+	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(LIB_OBJS) -o $@
 
 # ─ Link REPL
 $(REPL_BIN): $(LIB_OBJS) | $(BIN_DIR)
-    @echo "🚀 Linking REPL..."
-    $(CXX) $(CXXFLAGS) $(REPL_SRC) $(LIB_OBJS) -o $@
+	@echo "🚀 Linking REPL..."
+	$(CXX) $(CXXFLAGS) $(REPL_SRC) $(LIB_OBJS) -o $@
 
 # ─ Compile each library .cpp → mirrored .o
 $(OBJ_DIR)/$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
-    @echo "🛠  Compiling $<"
-    @mkdir -p $(dir $@)
-    $(CXX) $(CXXFLAGS) -c $< -o $@
+	@echo "🛠  Compiling $<"
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # ────────────────────────────────────
 # Run or launch targets
 .PHONY: test repl clean all
 
 test: $(TEST_BIN)
-    @echo "\n✅ Running tests..."
-    @$(TEST_BIN)
-    # @$(TEST_BIN) $(if $(TESTCASE),--test-case=$(TESTCASE))
+	@echo "\n✅ Running tests..."
+	@$(TEST_BIN)
+	# @$(TEST_BIN) $(if $(TESTCASE),--test-case=$(TESTCASE))
 
 repl: $(REPL_BIN)
-    @echo "\n🔧 Starting REPL..."
-    @$(REPL_BIN)
+	@echo "\n🔧 Starting REPL..."
+	@$(REPL_BIN)
 
 # ────────────────────────────────────
 # Ensure bin/ exists before linking
 $(BIN_DIR):
-    @mkdir -p $@
+	@mkdir -p $@
 
 # ────────────────────────────────────
 # Clean up everything
 clean:
-    @echo "🧹 Cleaning build artifacts"
-    @rm -rf $(OBJ_DIR) $(BIN_DIR)
+	@echo "🧹 Cleaning build artifacts"
+	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 
