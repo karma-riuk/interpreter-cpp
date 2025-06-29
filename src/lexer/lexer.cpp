@@ -17,6 +17,18 @@ namespace lexer {
             return {token::type::ASSIGN, c};
         case '+':
             return {token::type::PLUS, c};
+        case '-':
+            return {token::type::MINUS, c};
+        case '!':
+            return {token::type::BANG, c};
+        case '*':
+            return {token::type::ASTERISK, c};
+        case '/':
+            return {token::type::SLASH, c};
+        case '<':
+            return {token::type::LT, c};
+        case '>':
+            return {token::type::GT, c};
         case ',':
             return {token::type::COMMA, c};
         case ';':

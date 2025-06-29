@@ -12,6 +12,12 @@ namespace token {
     X(INT, "INT")                                                              \
     X(ASSIGN, "=")                                                             \
     X(PLUS, "+")                                                               \
+    X(MINUS, "-")                                                              \
+    X(BANG, "!")                                                               \
+    X(ASTERISK, "*")                                                           \
+    X(SLASH, "/")                                                              \
+    X(LT, "<")                                                                 \
+    X(GT, ">")                                                                 \
     X(COMMA, ",")                                                              \
     X(SEMICOLON, ";")                                                          \
     X(LPAREN, "(")                                                             \
