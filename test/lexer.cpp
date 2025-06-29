@@ -3,6 +3,7 @@
 #include "token/type.hpp"
 
 #include <doctest.h>
+#include <sstream>
 #include <string>
 
 TEST_CASE("next token") {
@@ -12,8 +13,9 @@ TEST_CASE("next token") {
     };
 
     std::string input = "=+(){},;";
+    std::istringstream ss(input);
 
-    lexer::lexer l{};
+    lexer::lexer l{ss};
 
     test tests[] = {
         {token::type::ASSIGN, "="},
