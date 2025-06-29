@@ -10,7 +10,7 @@ namespace token {
 #define TOKEN_LIST                                                             \
     X(ILLEGAL, "ILLEGAL")                                                      \
     X(END_OF_FILE, "EOF")                                                      \
-    X(IDENT, "IDENT")                                                          \
+    X(IDENTIFIER, "IDENTIFIER")                                                \
     X(INT, "INT")                                                              \
     X(ASSIGN, "=")                                                             \
     X(PLUS, "+")                                                               \
