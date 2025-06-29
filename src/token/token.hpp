@@ -4,7 +4,7 @@
 
 #include <string>
 
-struct Token {
+struct token {
     TokenType type;
     std::string literal;
 };
