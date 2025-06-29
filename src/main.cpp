@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main() {
-    auto eof = TokenType::ILLEGAL;
+    token::type eof = token::type::ILLEGAL;
     std::cout << eof << std::endl;
     return 0;
 }
