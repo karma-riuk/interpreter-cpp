@@ -31,7 +31,7 @@ TEST_TARGET   := $(BIN_DIR)/monkey_tests
 # -------------------------------------------------------------------
 # Top‐level rules
 # -------------------------------------------------------------------
-.PHONY: all clean monkey tests
+.PHONY: all clean run tests
 all: $(TARGET) $(TEST_TARGET)
 
 clean:
@@ -40,7 +40,7 @@ clean:
 # -------------------------------------------------------------------
 # Build & run
 # -------------------------------------------------------------------
-monkey: $(TARGET)
+run: $(TARGET)
 	@$(TARGET)
 
 tests: $(TEST_TARGET)
