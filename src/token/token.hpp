@@ -4,7 +4,9 @@
 
 #include <string>
 
-struct token {
-    TokenType type;
-    std::string literal;
-};
+namespace token {
+    struct token {
+        token::Type type;
+        std::string literal;
+    };
+} // namespace token
