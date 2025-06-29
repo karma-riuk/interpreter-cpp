@@ -6,10 +6,11 @@
 namespace token {
 
     // Array mapping enum values to their string representations
-    constexpr std::array<std::string_view, static_cast<size_t>(type::LET) + 1>
-        tokenTypeStrings = {
+    constexpr std::
+        array<std::string_view, static_cast<size_t>(type::RETURN) + 1>
+            tokenTypeStrings = {
 #define X(name, str) str,
-            TOKEN_LIST
+                TOKEN_LIST
 #undef X
     };
 
@@ -24,6 +25,11 @@ namespace token {
     static std::unordered_map<std::string, type> keywords{
         {"fn", type::FUNCTION},
         {"let", type::LET},
+        {"if", type::IF},
+        {"else", type::ELSE},
+        {"true", type::TRUE},
+        {"false", type::FALSE},
+        {"return", type::RETURN},
     };
 
     type lookup_identifier(std::string ident) {

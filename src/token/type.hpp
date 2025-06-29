@@ -24,8 +24,13 @@ namespace token {
     X(RPAREN, ")")                                                             \
     X(LBRACE, "{")                                                             \
     X(RBRACE, "}")                                                             \
+    X(LET, "LET")                                                              \
     X(FUNCTION, "FUNCTION")                                                    \
-    X(LET, "LET")
+    X(IF, "IF")                                                                \
+    X(ELSE, "ELSE")                                                            \
+    X(TRUE, "TRUE")                                                            \
+    X(FALSE, "FALSE")                                                          \
+    X(RETURN, "RETURN")
 
     // Define the TokenType enum using the X-macro
     enum class type {
