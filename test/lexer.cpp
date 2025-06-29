@@ -24,7 +24,7 @@ TEST_CASE("next token") {
         {token::type::RBRACE, "}"},
         {token::type::COMMA, ","},
         {token::type::SEMICOLON, ";"},
-        {token::type::EOF_, ""},
+        {token::type::END_OF_FILE, ""},
     };
 
     for (const auto& t : tests) {

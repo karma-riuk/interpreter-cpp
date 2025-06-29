@@ -9,7 +9,7 @@ namespace token {
 // X-macro list of token types and their string representations
 #define TOKEN_LIST                                                             \
     X(ILLEGAL, "ILLEGAL")                                                      \
-    X(EOF_, "EOF")                                                             \
+    X(END_OF_FILE, "EOF")                                                      \
     X(IDENT, "IDENT")                                                          \
     X(INT, "INT")                                                              \
     X(ASSIGN, "=")                                                             \
