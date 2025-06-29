@@ -6,7 +6,7 @@
 
 namespace token {
     struct token {
-        token::Type type;
+        ::token::type type;
         std::string literal;
     };
 } // namespace token
