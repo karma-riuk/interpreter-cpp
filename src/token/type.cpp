@@ -1,5 +1,8 @@
 #include "type.hpp"
 
+#include <array>
+#include <unordered_map>
+
 namespace token {
 
     // Array mapping enum values to their string representations
@@ -16,6 +19,19 @@ namespace token {
         if (idx < tokenTypeStrings.size())
             return os << tokenTypeStrings[idx];
         return os << "Unknown";
+    }
+
+    static std::unordered_map<std::string, type> keywords{
+        {"fn", type::FUNCTION},
+        {"let", type::LET},
+    };
+
+    type lookup_identifier(std::string ident) {
+        try {
+            return keywords.at(ident);
+        } catch (const std::out_of_range&) {
+            return type::IDENTIFIER;
+        }
     }
 
 } // namespace token

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <array>
 #include <ostream>
-#include <string_view>
 
 namespace token {
 
@@ -30,5 +28,6 @@ namespace token {
 #undef X
     };
 
-    std::ostream& operator<<(std::ostream& os, type type);
+    std::ostream& operator<<(std::ostream&, type);
+    type lookup_identifier(std::string);
 } // namespace token
