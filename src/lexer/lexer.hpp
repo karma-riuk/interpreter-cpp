@@ -5,12 +5,13 @@
 namespace lexer {
     struct lexer {
         std::istream& input;
+        char c;
         token::token next_token();
 
       private:
         bool is_letter(char);
 
-        std::string read_string(char);
-        std::string read_int(char);
+        std::string read_string();
+        std::string read_int();
     };
 } // namespace lexer

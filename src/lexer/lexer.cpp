@@ -8,7 +8,6 @@
 
 namespace lexer {
     token::token lexer::next_token() {
-        char c;
         if (!(input >> c))
             return {token::type::END_OF_FILE, ""};
 
@@ -47,14 +46,14 @@ namespace lexer {
             return {token::type::RBRACE, c};
         default:
             if (is_letter(c)) {
-                std::string identifier_or_keyword = read_string(c);
+                std::string identifier_or_keyword = read_string();
                 return {
                     token::lookup_identifier(identifier_or_keyword),
                     identifier_or_keyword
                 };
             }
             if (std::isdigit(c))
-                return {token::type::INT, read_int(c)};
+                return {token::type::INT, read_int()};
 
             return {token::type::ILLEGAL, c};
         }
@@ -64,17 +63,17 @@ namespace lexer {
         return c == '_' || std::isalpha(static_cast<unsigned char>(c));
     }
 
-    std::string lexer::read_string(char first_char) {
+    std::string lexer::read_string() {
         std::string result;
-        result.push_back(first_char);
+        result.push_back(c);
         for (char c = input.peek(); is_letter(c); c = input.peek())
             result.push_back(input.get());
         return result;
     }
 
-    std::string lexer::read_int(char first_digit) {
+    std::string lexer::read_int() {
         std::string result;
-        result.push_back(first_digit);
+        result.push_back(c);
         for (char c = input.peek(); std::isdigit(c); c = input.peek())
             result.push_back(input.get());
         return result;
