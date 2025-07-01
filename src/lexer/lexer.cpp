@@ -14,12 +14,16 @@ namespace lexer {
 
         switch (c) {
         case '=':
+            if (input.peek() == '=')
+                return {token::type::EQ, std::string{c, (char) input.get()}};
             return {token::type::ASSIGN, c};
         case '+':
             return {token::type::PLUS, c};
         case '-':
             return {token::type::MINUS, c};
         case '!':
+            if (input.peek() == '=')
+                return {token::type::NEQ, std::string{c, (char) input.get()}};
             return {token::type::BANG, c};
         case '*':
             return {token::type::ASTERISK, c};

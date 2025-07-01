@@ -56,6 +56,9 @@ if (5 < 10) {\
 } else {\
     return false;\
 }\
+\
+10 == 10;\
+10 != 9;\
 ");
 
     lexer::lexer l{ss};
@@ -137,6 +140,16 @@ if (5 < 10) {\
         {token::type::SEMICOLON, ";"},
 
         {token::type::RBRACE, "}"},
+
+        {token::type::INT, "10"},
+        {token::type::EQ, "=="},
+        {token::type::INT, "10"},
+        {token::type::SEMICOLON, ";"},
+
+        {token::type::INT, "10"},
+        {token::type::NEQ, "!="},
+        {token::type::INT, "9"},
+        {token::type::SEMICOLON, ";"},
         // clang-format on
     };
 

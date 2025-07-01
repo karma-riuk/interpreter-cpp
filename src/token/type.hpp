@@ -30,6 +30,8 @@ namespace token {
     X(ELSE, "ELSE")                                                            \
     X(TRUE, "TRUE")                                                            \
     X(FALSE, "FALSE")                                                          \
+    X(EQ, "==")                                                                \
+    X(NEQ, "!=")                                                               \
     X(RETURN, "RETURN")
 
     // Define the TokenType enum using the X-macro
