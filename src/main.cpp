@@ -1,9 +1,8 @@
-#include "token/type.hpp"
+#include "repl/repl.hpp"
 
 #include <iostream>
 
 int main() {
-    token::type eof = token::type::ILLEGAL;
-    std::cout << eof << std::endl;
+    repl::start(std::cin, std::cout);
     return 0;
 }

@@ -13,4 +13,8 @@ namespace token {
 
         token(::token::type t, char c): type(t), literal(1, c) {}
     };
+
+    inline std::ostream& operator<<(std::ostream& os, token tok) {
+        return os << tok.type << '(' << tok.literal << ')';
+    }
 } // namespace token
