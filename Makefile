@@ -31,8 +31,11 @@ TEST_TARGET   := $(BIN_DIR)/monkey_tests
 # -------------------------------------------------------------------
 # Top‐level rules
 # -------------------------------------------------------------------
-.PHONY: all clean run tests
+.PHONY: all clean run tests valgrind
 all: $(TARGET) $(TEST_TARGET)
+
+valgrind: CXXFLAGS += -O0 -g
+valgrind: $(TARGET) $(TEST_TARGET)
 
 clean:
 	@rm -rf $(BUILD_DIR)
