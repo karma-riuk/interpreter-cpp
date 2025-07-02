@@ -31,8 +31,8 @@ TEST_CASE("Single character token") {
 
     for (const auto& t : tests) {
         token::token tok = l.next_token();
-        CHECK(tok.type == t.expectedType);
-        CHECK(tok.literal == t.expectedLiteral);
+        REQUIRE(tok.type == t.expectedType);
+        REQUIRE(tok.literal == t.expectedLiteral);
     }
 };
 
@@ -155,7 +155,7 @@ if (5 < 10) {\
 
     for (const auto& t : tests) {
         token::token tok = l.next_token();
-        CHECK(tok.type == t.expectedType);
-        CHECK(tok.literal == t.expectedLiteral);
+        REQUIRE(tok.type == t.expectedType);
+        REQUIRE(tok.literal == t.expectedLiteral);
     }
 };
