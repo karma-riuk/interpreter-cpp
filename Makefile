@@ -46,7 +46,7 @@ clean:
 run: $(TARGET)
 	@$(TARGET)
 
-tests: $(TEST_TARGET)
+test: $(TEST_TARGET)
 	@$(TEST_TARGET) $(if $(TEST),--test-case=$(TEST))
 
 # -------------------------------------------------------------------
