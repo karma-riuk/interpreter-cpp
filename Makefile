@@ -35,7 +35,8 @@ TEST_TARGET   := $(BIN_DIR)/monkey_tests
 all: $(TARGET) $(TEST_TARGET)
 
 valgrind: CXXFLAGS += -O0 -g
-valgrind: $(TARGET) $(TEST_TARGET)
+valgrind: $(TEST_TARGET)
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes $(TEST_TARGET)
 
 clean:
 	@rm -rf $(BUILD_DIR)
