@@ -51,6 +51,17 @@ namespace parser {
         return false;
     }
 
+    ast::return_stmt* parser::parse_return() {
+        ast::return_stmt* stmt = new ast::return_stmt(current);
+        next_token();
+
+        // TODO: we are currently skipping expressions until we encounter a
+        // semicolon
+        for (; current.type != token::type::SEMICOLON; next_token()) {}
+
+        return stmt;
+    }
+
     ast::let_stmt* parser::parse_let() {
         ast::let_stmt* stmt = new ast::let_stmt(current);
 

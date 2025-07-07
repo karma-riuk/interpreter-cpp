@@ -1,0 +1,16 @@
+
+#include "ast/ast.hpp"
+#include "token/token.hpp"
+
+namespace ast {
+    struct return_stmt : statement {
+        return_stmt(token::token token);
+
+        token::token token;
+        expression* value;
+
+        std::string token_literal() const override;
+
+        ~return_stmt();
+    };
+} // namespace ast
