@@ -27,8 +27,8 @@ return 103213;\
 
     for (const auto stmt : program->statements) {
         REQUIRE(stmt->token_literal() == "return");
-        ast::let* let_stmt;
-        REQUIRE_NOTHROW(let_stmt = dynamic_cast<ast::let*>(stmt));
+        ast::let_stmt* let_stmt;
+        REQUIRE_NOTHROW(let_stmt = dynamic_cast<ast::let_stmt*>(stmt));
         REQUIRE_MESSAGE(
             let_stmt != nullptr,
             "Couldn't cast statement to a return statement"

@@ -5,8 +5,8 @@
 #include "token/token.hpp"
 
 namespace ast {
-    struct let : statement {
-        let(token::token token);
+    struct let_stmt : statement {
+        let_stmt(token::token token);
 
         token::token token;
         identifier* name;
@@ -14,6 +14,6 @@ namespace ast {
 
         std::string token_literal() const override;
 
-        ~let();
+        ~let_stmt();
     };
 } // namespace ast

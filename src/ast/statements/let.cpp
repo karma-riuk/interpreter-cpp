@@ -1,16 +1,16 @@
 #include "let.hpp"
 
 namespace ast {
-    let::let(token::token token)
+    let_stmt::let_stmt(token::token token)
         : token(std::move(token)),
           name(nullptr),
           value(nullptr) {}
 
-    std::string let::token_literal() const {
+    std::string let_stmt::token_literal() const {
         return token.literal;
     }
 
-    let::~let() {
+    let_stmt::~let_stmt() {
         delete name;
         delete value;
     };

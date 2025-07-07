@@ -35,6 +35,8 @@ namespace parser {
         switch (current.type) {
         case token::type::LET:
             return parse_let();
+        case token::type::RETURN:
+            return parse_return();
         default:
             return nullptr;
         }
@@ -49,8 +51,8 @@ namespace parser {
         return false;
     }
 
-    ast::let* parser::parse_let() {
-        ast::let* stmt = new ast::let(current);
+    ast::let_stmt* parser::parse_let() {
+        ast::let_stmt* stmt = new ast::let_stmt(current);
 
         if (!expect_next(token::type::IDENTIFIER)) {
             delete stmt;

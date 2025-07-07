@@ -10,8 +10,8 @@
 
 void test_let_statement(ast::statement* stmt, const std::string name) {
     REQUIRE(stmt->token_literal() == "let");
-    ast::let* let_stmt;
-    REQUIRE_NOTHROW(let_stmt = dynamic_cast<ast::let*>(stmt));
+    ast::let_stmt* let_stmt;
+    REQUIRE_NOTHROW(let_stmt = dynamic_cast<ast::let_stmt*>(stmt));
     REQUIRE_MESSAGE(
         let_stmt != nullptr,
         "Couldn't cast statement to a let statement"
