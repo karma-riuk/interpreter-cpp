@@ -1,11 +1,11 @@
-#include "parser/parser.hpp"
+#include "ast/statements/let.hpp"
 
 #include "ast/ast.hpp"
-#include "ast/statements/let.hpp"
 #include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
+#include "utils.hpp"
 
 #include <doctest.h>
-#include <iostream>
 #include <sstream>
 
 void test_let_statement(ast::statement* stmt, const std::string name) {
@@ -55,18 +55,6 @@ void test_failing_let_parsing(
     );
     REQUIRE(program->statements.size() == n_good_statements);
     delete program;
-}
-
-void check_parser_errors(const std::vector<ast::error::error*>& errors) {
-    if (errors.empty())
-        return;
-
-    std::cerr << "parser has " << errors.size() << " errors:\n";
-    for (const auto& error : errors)
-        std::cerr << '\t' << error->what() << "\n";
-
-    // Use doctest's FAIL macro to immediately stop
-    FAIL_CHECK("Parser had errors. See stderr for details.");
 }
 
 TEST_CASE("Malformed let statement (checking for memory leaks)") {
