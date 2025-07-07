@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast/ast.hpp"
+#include "ast/errors/error.hpp"
 #include "ast/statements/let.hpp"
 #include "lexer/lexer.hpp"
 #include "token/token.hpp"
@@ -8,7 +9,8 @@
 namespace parser {
     struct parser {
         parser(lexer::lexer& lexer);
-        std::vector<std::string> errors;
+        ~parser();
+        std::vector<ast::error::error*> errors;
 
         ast::program* parse_program();
 

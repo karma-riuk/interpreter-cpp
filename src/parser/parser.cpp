@@ -1,5 +1,6 @@
 #include "parser.hpp"
 
+#include "ast/errors/error.hpp"
 #include "token/type.hpp"
 
 #include <sstream>
@@ -27,7 +28,6 @@ namespace parser {
                 p->statements.push_back(stmt);
         }
 
-
         return p;
     }
 
@@ -45,6 +45,7 @@ namespace parser {
             next_token();
             return true;
         }
+        next_error(t);
         return false;
     }
 
@@ -73,6 +74,11 @@ namespace parser {
         std::stringstream ss;
         ss << "Expected next token to be " << t << " but instead got "
            << next.type;
-        errors.push_back(ss.str());
+        errors.push_back(new ast::error::expected_next(t, ss.str()));
+    }
+
+    parser::~parser() {
+        for (const auto& e : errors)
+            delete e;
     }
 } // namespace parser

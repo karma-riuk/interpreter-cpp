@@ -21,13 +21,49 @@ void test_let_statement(ast::statement* stmt, const std::string name) {
     REQUIRE(let_stmt->name->token_literal() == name);
 }
 
-void checkParserErrors(const std::vector<std::string>& errors) {
+void test_failing_let_parsing(
+    std::string input_s,
+    std::vector<token::type> expected_types,
+    int n_good_statements = 0
+) {
+    std::stringstream input(input_s);
+
+    lexer::lexer l{input};
+    parser::parser p{l};
+
+    ast::program* program = p.parse_program();
+
+    // Check for errors
+    REQUIRE(p.errors.size() == expected_types.size());
+
+    int i = 0;
+    for (auto& e : p.errors) {
+        ast::error::expected_next* en;
+
+        REQUIRE_NOTHROW(en = dynamic_cast<ast::error::expected_next*>(e));
+        REQUIRE_MESSAGE(
+            en != nullptr,
+            "Couldn't cast the error to an 'expected_next'"
+        );
+        REQUIRE(en->expected_type == expected_types[i++]);
+    }
+
+    // normal program check
+    REQUIRE_MESSAGE(
+        program != nullptr,
+        "parse_program() returned a null pointer"
+    );
+    REQUIRE(program->statements.size() == n_good_statements);
+    delete program;
+}
+
+void check_parser_errors(const std::vector<ast::error::error*>& errors) {
     if (errors.empty())
         return;
 
     std::cerr << "parser has " << errors.size() << " errors:\n";
-    for (const auto& msg : errors)
-        std::cerr << "parser error: \"" << msg << "\"\n";
+    for (const auto& error : errors)
+        std::cerr << '\t' << error->what() << "\n";
 
     // Use doctest's FAIL macro to immediately stop
     FAIL_CHECK("Parser had errors. See stderr for details.");
@@ -35,37 +71,26 @@ void checkParserErrors(const std::vector<std::string>& errors) {
 
 TEST_CASE("Malformed let statement (checking for memory leaks)") {
     SUBCASE("Second token not identifier") {
-        std::stringstream input("\
-let 5 = 5;\
-");
-
-        lexer::lexer l{input};
-        parser::parser p{l};
-
-        ast::program* program = p.parse_program();
-        REQUIRE_MESSAGE(
-            program != nullptr,
-            "parse_program() returned a null pointer"
-        );
-        REQUIRE(program->statements.size() == 0);
-        delete program;
+        test_failing_let_parsing("let 5 = 5;", {token::type::IDENTIFIER});
     }
 
     SUBCASE("Third token not '='") {
-        std::stringstream input("\
-let five ! 5;\
-");
+        test_failing_let_parsing("let five ! 5;", {token::type::ASSIGN});
+    }
 
-        lexer::lexer l{input};
-        parser::parser p{l};
+    SUBCASE("Missing both identifier and '='") {
+        test_failing_let_parsing("let 5;", {token::type::IDENTIFIER});
+    }
 
-        ast::program* program = p.parse_program();
-        REQUIRE_MESSAGE(
-            program != nullptr,
-            "parse_program() returned a null pointer"
+    SUBCASE("Multiple parsing errors") {
+        test_failing_let_parsing(
+            "let 5; let ! = 5; let five = 5; let five 5; let;",
+            {token::type::IDENTIFIER,
+             token::type::IDENTIFIER,
+             token::type::ASSIGN,
+             token::type::IDENTIFIER},
+            1
         );
-        REQUIRE(program->statements.size() == 0);
-        delete program;
     }
 }
 
@@ -80,6 +105,7 @@ let foobar = 103213;\
     parser::parser p{l};
 
     ast::program* program = p.parse_program();
+    check_parser_errors(p.errors);
 
     REQUIRE_MESSAGE(
         program != nullptr,
