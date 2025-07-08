@@ -12,5 +12,6 @@ namespace ast {
         std::string value;
 
         std::string token_literal() const override;
+        std::string str() const override;
     };
 } // namespace ast

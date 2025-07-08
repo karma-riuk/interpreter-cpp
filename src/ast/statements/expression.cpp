@@ -1,5 +1,7 @@
 #include "expression.hpp"
 
+#include <sstream>
+
 namespace ast {
 
     expression_stmt::expression_stmt(token::token token)
@@ -13,4 +15,13 @@ namespace ast {
     expression_stmt::~expression_stmt() {
         delete expression;
     }
+
+    std::string expression_stmt::str() const {
+        std::stringstream ss;
+
+        if (expression != nullptr)
+            ss << expression->str();
+
+        return ss.str();
+    };
 } // namespace ast

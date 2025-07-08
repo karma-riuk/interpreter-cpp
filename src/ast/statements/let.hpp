@@ -13,6 +13,7 @@ namespace ast {
         expression* value;
 
         std::string token_literal() const override;
+        std::string str() const override;
 
         ~let_stmt();
     };

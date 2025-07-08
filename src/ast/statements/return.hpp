@@ -1,3 +1,4 @@
+#pragma once
 
 #include "ast/ast.hpp"
 #include "token/token.hpp"
@@ -10,6 +11,7 @@ namespace ast {
         expression* value;
 
         std::string token_literal() const override;
+        std::string str() const override;
 
         ~return_stmt();
     };

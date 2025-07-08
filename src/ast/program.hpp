@@ -9,7 +9,8 @@ namespace ast {
     struct program : public node {
         std::vector<statement*> statements;
         std::string token_literal() const override;
-        virtual std::string str() const override = 0;
+
+        virtual std::string str() const override;
 
         ~program();
     };

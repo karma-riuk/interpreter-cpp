@@ -11,6 +11,7 @@ namespace ast {
         ast::expression* expression;
 
         std::string token_literal() const override;
+        std::string str() const override;
 
         ~expression_stmt();
     };

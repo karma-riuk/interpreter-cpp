@@ -1,4 +1,5 @@
 #pragma once
+
 #include "token/token.hpp"
 
 #include <istream>

@@ -8,4 +8,8 @@ namespace ast {
     std::string identifier::token_literal() const {
         return token.literal;
     }
+
+    std::string identifier::str() const {
+        return value;
+    };
 } // namespace ast
