@@ -83,18 +83,15 @@ TEST_SUITE("Parser: let") {
         }
     }
 
-    TEST_CASE("Parse well formed let statements") {
-        std::stringstream input("\
+    TEST_CASE_FIXTURE(ParserFixture, "Parse well formed let statements") {
+        setup("\
 let x = 5;\
 let y = 10;\
 let foobar = 103213;\
 ");
 
-        lexer::lexer l{input};
-        parser::parser p{l};
-
-        ast::program* program = p.parse_program();
-        check_parser_errors(p.errors);
+        ast::program* program = p->parse_program();
+        check_parser_errors(p->errors);
 
         REQUIRE_MESSAGE(
             program != nullptr,

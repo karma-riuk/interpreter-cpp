@@ -1,24 +1,19 @@
 #include "ast/ast.hpp"
-#include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 #include "utils.hpp"
 
 #include <doctest.h>
-#include <sstream>
 
 TEST_SUITE("Parser: return") {
-    TEST_CASE("Parse return statement") {
-        std::stringstream input("\
+    TEST_CASE_FIXTURE(ParserFixture, "Parse return statement") {
+        setup("\
 return 5;\
 return 10;\
 return 103213;\
 ");
 
-        lexer::lexer l{input};
-        parser::parser p{l};
-
-        ast::program* program = p.parse_program();
-        check_parser_errors(p.errors);
+        ast::program* program = p->parse_program();
+        check_parser_errors(p->errors);
 
         REQUIRE_MESSAGE(
             program != nullptr,
