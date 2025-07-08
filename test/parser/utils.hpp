@@ -1,28 +1,19 @@
-#include "ast/errors/error.hpp"
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 
-#include <doctest.h>
 #include <sstream>
-#include <vector>
 
 void check_parser_errors(const std::vector<ast::error::error*>& errors);
 
 struct ParserFixture {
     std::stringstream input;
-    lexer::lexer* l = nullptr;
-    parser::parser* p = nullptr;
+    lexer::lexer* lexer = nullptr;
+    parser::parser* parser = nullptr;
+    ast::program* program = nullptr;
 
     ParserFixture() = default;
 
-    void setup(std::string source) {
-        input << source;
-        l = new lexer::lexer{input};
-        p = new parser::parser(*l);
-    }
+    void setup(std::string);
 
-    ~ParserFixture() {
-        delete l;
-        delete p;
-    }
+    ~ParserFixture();
 };

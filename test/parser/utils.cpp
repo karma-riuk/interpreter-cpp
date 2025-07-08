@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <doctest.h>
 #include <iostream>
 
 void check_parser_errors(const std::vector<ast::error::error*>& errors) {
@@ -10,6 +11,26 @@ void check_parser_errors(const std::vector<ast::error::error*>& errors) {
     for (const auto& error : errors)
         std::cerr << '\t' << error->what() << "\n";
 
-    // Use doctest's FAIL macro to immediately stop
     FAIL_CHECK("Parser had errors. See stderr for details.");
+}
+
+void ParserFixture::setup(std::string source) {
+    input << source;
+    lexer = new lexer::lexer{input};
+    parser = new parser::parser(*lexer);
+    program = parser->parse_program();
+    check_parser_errors(parser->errors);
+
+    CAPTURE(parser);
+    CAPTURE(program);
+    REQUIRE_MESSAGE(
+        program != nullptr,
+        "parse_program() returned a null pointer"
+    );
+}
+
+ParserFixture::~ParserFixture() {
+    delete lexer;
+    delete parser;
+    delete program;
 }

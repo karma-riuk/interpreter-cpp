@@ -90,13 +90,6 @@ let y = 10;\
 let foobar = 103213;\
 ");
 
-        ast::program* program = p->parse_program();
-        check_parser_errors(p->errors);
-
-        REQUIRE_MESSAGE(
-            program != nullptr,
-            "parse_program() returned a null pointer"
-        );
         REQUIRE(program->statements.size() == 3);
 
         struct test {
@@ -115,7 +108,5 @@ let foobar = 103213;\
 
             test_let_statement(stmt, t.expected_identifier);
         }
-
-        delete program;
     }
 }
