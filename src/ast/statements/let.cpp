@@ -8,6 +8,11 @@ namespace ast {
           name(nullptr),
           value(nullptr) {}
 
+    let_stmt::let_stmt(token::token token, identifier* name, expression* value)
+        : token(std::move(token)),
+          name(name),
+          value(value) {}
+
     std::string let_stmt::token_literal() const {
         return token.literal;
     }
@@ -23,6 +28,8 @@ namespace ast {
         ss << token_literal() << ' ' << name->str() << " = ";
         if (value != nullptr)
             ss << value->str();
+
+        ss << ';';
 
         return ss.str();
     };

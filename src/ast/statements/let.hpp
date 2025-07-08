@@ -7,6 +7,7 @@
 namespace ast {
     struct let_stmt : statement {
         let_stmt(token::token token);
+        let_stmt(token::token token, identifier* name, expression* value);
 
         token::token token;
         identifier* name;

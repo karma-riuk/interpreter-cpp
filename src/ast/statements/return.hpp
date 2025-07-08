@@ -6,6 +6,7 @@
 namespace ast {
     struct return_stmt : statement {
         return_stmt(token::token token);
+        return_stmt(token::token token, expression* value);
 
         token::token token;
         expression* value;
