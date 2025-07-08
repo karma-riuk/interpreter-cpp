@@ -48,7 +48,7 @@ run: $(TARGET)
 	@$(TARGET)
 
 test: $(TEST_TARGET)
-	@$(TEST_TARGET) $(if $(TEST),--test-case="$(TEST)")
+	@$(TEST_TARGET) $(if $(TEST),--test-case="$(TEST)") $(if $(SUBCASE),--subcase="$(SUBCASE)")
 
 # -------------------------------------------------------------------
 # Link binaries
