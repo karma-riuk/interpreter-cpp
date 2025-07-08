@@ -2,11 +2,14 @@
 
 #include "ast/ast.hpp"
 #include "ast/errors/error.hpp"
+#include "ast/program.hpp"
 #include "ast/statements/expression.hpp"
 #include "ast/statements/let.hpp"
 #include "ast/statements/return.hpp"
 #include "lexer/lexer.hpp"
 #include "token/token.hpp"
+
+#include <vector>
 
 namespace parser {
     struct parser {

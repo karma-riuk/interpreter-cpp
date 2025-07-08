@@ -9,13 +9,7 @@ namespace ast {
         virtual ~node() = default;
     };
 
-    struct statement : node {
-        virtual std::string token_literal() const override = 0;
-        virtual std::string str() const override = 0;
-    };
+    struct statement : node {};
 
-    struct expression : node {
-        virtual std::string token_literal() const override = 0;
-        virtual std::string str() const override = 0;
-    };
+    struct expression : node {};
 } // namespace ast
