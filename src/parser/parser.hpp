@@ -21,6 +21,7 @@ namespace parser {
 
         void next_token();
         ast::statement* parse_statement();
+        ast::expression* parse_expression();
         ast::let_stmt* parse_let();
         ast::return_stmt* parse_return();
         bool expect_next(token::type);

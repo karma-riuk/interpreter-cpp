@@ -50,14 +50,18 @@ namespace parser {
         next_error(t);
         return false;
     }
+    ast::expression* parser::parse_expression() {
+        // TODO: we are currently skipping expressions until we encounter a
+        // semicolon
+        for (; current.type != token::type::SEMICOLON; next_token()) {}
+        return nullptr;
+    };
 
     ast::return_stmt* parser::parse_return() {
         ast::return_stmt* stmt = new ast::return_stmt(current);
         next_token();
 
-        // TODO: we are currently skipping expressions until we encounter a
-        // semicolon
-        for (; current.type != token::type::SEMICOLON; next_token()) {}
+        stmt->value = parse_expression();
 
         return stmt;
     }
@@ -77,9 +81,10 @@ namespace parser {
             return nullptr;
         }
 
-        // TODO: we are currently skipping expressions until we encounter a
-        // semicolon
-        for (; current.type != token::type::SEMICOLON; next_token()) {}
+        stmt->value = parse_expression();
+        return stmt;
+    }
+
         return stmt;
     }
 
