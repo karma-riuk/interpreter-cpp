@@ -7,6 +7,7 @@
 #include "ast/statements/let.hpp"
 #include "ast/statements/return.hpp"
 #include "lexer/lexer.hpp"
+#include "precedence.hpp"
 #include "token/token.hpp"
 
 #include <functional>
@@ -18,7 +19,7 @@ namespace parser {
     using infix_parse_fn = std::function<ast::expression*(ast::expression*)>;
 
     struct parser {
-        parser(lexer::lexer& lexer);
+        parser(lexer::lexer&);
         ~parser();
         std::vector<ast::error::error*> errors;
 
@@ -34,7 +35,7 @@ namespace parser {
         void next_token();
         void skip_until_semicolon();
         ast::statement* parse_statement();
-        ast::expression* parse_expression();
+        ast::expression* parse_expression(precedence = precedence::LOWEST);
         ast::let_stmt* parse_let();
         ast::return_stmt* parse_return();
         ast::expression_stmt* parse_expression_stmt();
@@ -43,5 +44,8 @@ namespace parser {
 
         void register_prefix(token::type, prefix_parse_fn);
         void register_infix(token::type, infix_parse_fn);
+
+        ast::expression* parse_identifier();
+        ast::expression* parse_integer();
     };
 } // namespace parser

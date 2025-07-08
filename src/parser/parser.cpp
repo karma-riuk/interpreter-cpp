@@ -1,5 +1,9 @@
 #include "parser.hpp"
 
+#include "ast/expressions/identifier.hpp"
+#include "ast/expressions/integer.hpp"
+#include "token/type.hpp"
+
 #include <sstream>
 
 namespace parser {
@@ -9,6 +13,16 @@ namespace parser {
           next(token::type::ILLEGAL, "") {
         next_token();
         next_token();
+
+        register_prefix(
+            token::type::IDENTIFIER,
+            std::bind(&parser::parse_identifier, this)
+        );
+
+        register_prefix(
+            token::type::INT,
+            std::bind(&parser::parse_integer, this)
+        );
     }
 
     void parser::next_token() {
@@ -45,11 +59,13 @@ namespace parser {
         }
     }
 
-    ast::expression* parser::parse_expression() {
-        // TODO: we are currently skipping expressions until we encounter a
-        // semicolon
-        for (; current.type != token::type::SEMICOLON; next_token()) {}
-        return nullptr;
+    ast::expression* parser::parse_expression(precedence) {
+        auto it = prefix_parse_fns.find(current.type);
+        if (it == prefix_parse_fns.end())
+            return nullptr;
+
+        prefix_parse_fn func = it->second;
+        return func();
     };
 
     ast::return_stmt* parser::parse_return() {
@@ -125,5 +141,13 @@ namespace parser {
 
     void parser::register_infix(token::type type, infix_parse_fn fn) {
         infix_parse_fns[type] = fn;
+    };
+
+    ast::expression* parser::parse_identifier() {
+        return new ast::identifier(current, current.literal);
+    };
+
+    ast::expression* parser::parse_integer() {
+        return new ast::integer_literal(current, std::stoi(current.literal));
     };
 } // namespace parser
