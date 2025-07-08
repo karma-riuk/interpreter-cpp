@@ -35,7 +35,7 @@ namespace parser {
         case token::type::RETURN:
             return parse_return();
         default:
-            return nullptr;
+            return parse_expression_stmt();
         }
     }
 
@@ -102,4 +102,12 @@ namespace parser {
         for (const auto& e : errors)
             delete e;
     }
+
+    void parser::register_prefix(token::type type, prefix_parse_fn fn) {
+        prefix_parse_fns[type] = fn;
+    };
+
+    void parser::register_infix(token::type type, infix_parse_fn fn) {
+        infix_parse_fns[type] = fn;
+    };
 } // namespace parser

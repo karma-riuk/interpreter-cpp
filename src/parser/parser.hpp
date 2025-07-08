@@ -9,9 +9,14 @@
 #include "lexer/lexer.hpp"
 #include "token/token.hpp"
 
+#include <functional>
 #include <vector>
 
 namespace parser {
+
+    using prefix_parse_fn = std::function<ast::expression*()>;
+    using infix_parse_fn = std::function<ast::expression*(ast::expression*)>;
+
     struct parser {
         parser(lexer::lexer& lexer);
         ~parser();
@@ -23,6 +28,9 @@ namespace parser {
         lexer::lexer& lexer;
         token::token current, next;
 
+        std::unordered_map<token::type, prefix_parse_fn> prefix_parse_fns;
+        std::unordered_map<token::type, infix_parse_fn> infix_parse_fns;
+
         void next_token();
         ast::statement* parse_statement();
         ast::expression* parse_expression();
@@ -31,5 +39,8 @@ namespace parser {
         ast::expression_stmt* parse_expression_stmt();
         bool expect_next(token::type);
         void next_error(token::type);
+
+        void register_prefix(token::type, prefix_parse_fn);
+        void register_infix(token::type, infix_parse_fn);
     };
 } // namespace parser
