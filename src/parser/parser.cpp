@@ -42,14 +42,6 @@ namespace parser {
         }
     }
 
-    bool parser::expect_next(token::type t) {
-        if (next.type == t) {
-            next_token();
-            return true;
-        }
-        next_error(t);
-        return false;
-    }
     ast::expression* parser::parse_expression() {
         // TODO: we are currently skipping expressions until we encounter a
         // semicolon
@@ -85,7 +77,21 @@ namespace parser {
         return stmt;
     }
 
+    ast::expression_stmt* parser::parse_expression_stmt() {
+        ast::expression_stmt* stmt = new ast::expression_stmt(current);
+
+        stmt->expression = parse_expression();
+
         return stmt;
+    };
+
+    bool parser::expect_next(token::type t) {
+        if (next.type == t) {
+            next_token();
+            return true;
+        }
+        next_error(t);
+        return false;
     }
 
     void parser::next_error(token::type t) {

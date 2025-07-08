@@ -2,6 +2,7 @@
 
 #include "ast/ast.hpp"
 #include "ast/errors/error.hpp"
+#include "ast/statements/expression.hpp"
 #include "ast/statements/let.hpp"
 #include "ast/statements/return.hpp"
 #include "lexer/lexer.hpp"
@@ -24,6 +25,7 @@ namespace parser {
         ast::expression* parse_expression();
         ast::let_stmt* parse_let();
         ast::return_stmt* parse_return();
+        ast::expression_stmt* parse_expression_stmt();
         bool expect_next(token::type);
         void next_error(token::type);
     };
