@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 namespace ast {
@@ -8,6 +9,14 @@ namespace ast {
         virtual std::string str() const = 0;
         virtual ~node() = default;
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const node& n) {
+        return os << n.str();
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, const node* n) {
+        return os << n->str();
+    }
 
     struct statement : node {};
 
