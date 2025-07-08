@@ -32,6 +32,7 @@ namespace parser {
         std::unordered_map<token::type, infix_parse_fn> infix_parse_fns;
 
         void next_token();
+        void skip_until_semicolon();
         ast::statement* parse_statement();
         ast::expression* parse_expression();
         ast::let_stmt* parse_let();

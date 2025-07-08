@@ -16,6 +16,12 @@ namespace parser {
         next = lexer.next_token();
     }
 
+    void parser::skip_until_semicolon() {
+        for (; current.type != token::type::SEMICOLON
+               && current.type != token::type::END_OF_FILE;
+             next_token()) {};
+    }
+
     ast::program* parser::parse_program() {
         ast::program* p = new ast::program();
 
@@ -51,6 +57,8 @@ namespace parser {
         next_token();
 
         stmt->value = parse_expression();
+        if (next.type == token::type::SEMICOLON)
+            next_token();
 
         return stmt;
     }
@@ -60,6 +68,7 @@ namespace parser {
 
         if (!expect_next(token::type::IDENTIFIER)) {
             delete stmt;
+            skip_until_semicolon();
             return nullptr;
         }
 
@@ -67,10 +76,14 @@ namespace parser {
 
         if (!expect_next(token::type::ASSIGN)) {
             delete stmt;
+            skip_until_semicolon();
             return nullptr;
         }
+        next_token();
 
         stmt->value = parse_expression();
+        if (next.type == token::type::SEMICOLON)
+            next_token();
         return stmt;
     }
 
@@ -78,6 +91,9 @@ namespace parser {
         ast::expression_stmt* stmt = new ast::expression_stmt(current);
 
         stmt->expression = parse_expression();
+
+        if (next.type == token::type::SEMICOLON)
+            next_token();
 
         return stmt;
     };
