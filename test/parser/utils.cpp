@@ -1,7 +1,6 @@
 #include "utils.hpp"
 
 #include <doctest.h>
-#include <iostream>
 
 void check_parser_errors(const std::vector<ast::error::error*>& errors) {
     if (errors.empty())
