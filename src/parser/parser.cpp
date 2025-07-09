@@ -1,7 +1,10 @@
 #include "parser.hpp"
 
+#include "ast/errors/error.hpp"
 #include "ast/expressions/identifier.hpp"
 #include "ast/expressions/integer.hpp"
+#include "ast/expressions/prefix.hpp"
+#include "token/token.hpp"
 #include "token/type.hpp"
 
 #include <sstream>
@@ -22,6 +25,16 @@ namespace parser {
         register_prefix(
             token::type::INT,
             std::bind(&parser::parse_integer, this)
+        );
+
+        register_prefix(
+            token::type::BANG,
+            std::bind(&parser::parse_prefix_expr, this)
+        );
+
+        register_prefix(
+            token::type::MINUS,
+            std::bind(&parser::parse_prefix_expr, this)
         );
     }
 
@@ -61,8 +74,10 @@ namespace parser {
 
     ast::expression* parser::parse_expression(precedence) {
         auto it = prefix_parse_fns.find(current.type);
-        if (it == prefix_parse_fns.end())
+        if (it == prefix_parse_fns.end()) {
+            unkown_prefix_error(current);
             return nullptr;
+        }
 
         prefix_parse_fn func = it->second;
         return func();
@@ -130,6 +145,12 @@ namespace parser {
         errors.push_back(new ast::error::expected_next(t, ss.str()));
     }
 
+    void parser::unkown_prefix_error(token::token tok) {
+        std::stringstream ss;
+        ss << "No prefix parse function for token " << tok;
+        errors.push_back(new ast::error::unkown_prefix(tok, ss.str()));
+    }
+
     parser::~parser() {
         for (const auto& e : errors)
             delete e;
@@ -149,5 +170,12 @@ namespace parser {
 
     ast::expression* parser::parse_integer() {
         return new ast::integer_literal(current, std::stoi(current.literal));
+    };
+
+    ast::expression* parser::parse_prefix_expr() {
+        ast::prefix_expr* ret = new ast::prefix_expr(current, current.literal);
+        next_token();
+        ret->right = parse_expression(precedence::PREFIX);
+        return ret;
     };
 } // namespace parser

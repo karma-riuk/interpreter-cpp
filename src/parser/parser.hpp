@@ -41,11 +41,13 @@ namespace parser {
         ast::expression_stmt* parse_expression_stmt();
         bool expect_next(token::type);
         void next_error(token::type);
+        void unkown_prefix_error(token::token);
 
         void register_prefix(token::type, prefix_parse_fn);
         void register_infix(token::type, infix_parse_fn);
 
         ast::expression* parse_identifier();
         ast::expression* parse_integer();
+        ast::expression* parse_prefix_expr();
     };
 } // namespace parser

@@ -4,6 +4,16 @@
 #include "utils.hpp"
 
 #include <doctest.h>
+#include <sstream>
+
+void test_integer_literal(ast::expression* expr, int value) {
+    ast::integer_literal* int_lit = cast<ast::integer_literal>(expr);
+
+    REQUIRE(int_lit->value == value);
+    std::ostringstream oss;
+    oss << value;
+    REQUIRE(int_lit->token_literal() == oss.str());
+}
 
 TEST_SUITE("Parser: expression") {
     TEST_CASE_FIXTURE(
@@ -32,57 +42,39 @@ TEST_SUITE("Parser: expression") {
         ast::expression_stmt* expression_stmt =
             cast<ast::expression_stmt>(program->statements[0]);
 
-        ast::integer_literal* int_lit =
-            cast<ast::integer_literal>(expression_stmt->expression);
-
-        REQUIRE(int_lit->value == 5);
-        REQUIRE(int_lit->token_literal() == "5");
+        test_integer_literal(expression_stmt->expression, 5);
     };
 
-    // TEST_CASE_FIXTURE(
-    //     ParserFixture,
-    //     "Simple expression statement with prefix before integer"
-    // ) {
-    //     SUBCASE("Prefix: '!'") {
-    //         setup("!5;");
-    //
-    //         REQUIRE(program->statements.size() == 1);
-    //         ast::expression_stmt* expression_stmt =
-    //             cast<ast::expression_stmt>(program->statements[0]);
-    //
-    //         ast::prefix_expr* prefix_expr;
-    //         REQUIRE_NOTHROW(
-    //             prefix_expr =
-    //                 dynamic_cast<ast::prefix_expr*>(expression_stmt->expression)
-    //         );
-    //         REQUIRE_MESSAGE(
-    //             prefix_expr != nullptr,
-    //             "Couldn't cast expression to an identifier"
-    //         );
-    //
-    //         REQUIRE(prefix_expr->value == 5);
-    //         REQUIRE(prefix_expr->token_literal() == "5");
-    //     }
-    //     SUBCASE("Prefix: '-'") {
-    //         setup("-15;");
-    //
-    //         REQUIRE(program->statements.size() == 1);
-    //         ast::expression_stmt* expression_stmt =
-    //             get_expression_stmt(program->statements[0]);
-    //
-    //         ast::integer_literal* int_lit;
-    //         REQUIRE_NOTHROW(
-    //             int_lit = dynamic_cast<ast::integer_literal*>(
-    //                 expression_stmt->expression
-    //             )
-    //         );
-    //         REQUIRE_MESSAGE(
-    //             int_lit != nullptr,
-    //             "Couldn't cast expression to an identifier"
-    //         );
-    //
-    //         REQUIRE(int_lit->value == 5);
-    //         REQUIRE(int_lit->token_literal() == "5");
-    //     }
-    // }
+    TEST_CASE_FIXTURE(
+        ParserFixture,
+        "Simple expression statement with prefix before integer"
+    ) {
+        SUBCASE("Prefix: '!'") {
+            setup("!5;");
+
+            REQUIRE(program->statements.size() == 1);
+            ast::expression_stmt* expression_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            ast::prefix_expr* prefix_expr =
+                cast<ast::prefix_expr>(expression_stmt->expression);
+
+            REQUIRE(prefix_expr->op == "!");
+            test_integer_literal(prefix_expr->right, 5);
+        }
+
+        SUBCASE("Prefix: '-'") {
+            setup("-15;");
+
+            REQUIRE(program->statements.size() == 1);
+            ast::expression_stmt* expression_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            ast::prefix_expr* prefix_expr =
+                cast<ast::prefix_expr>(expression_stmt->expression);
+
+            REQUIRE(prefix_expr->op == "-");
+            test_integer_literal(prefix_expr->right, 15);
+        }
+    }
 }
