@@ -1,6 +1,7 @@
 #include "ast/statements/let.hpp"
 
 #include "ast/ast.hpp"
+#include "ast/errors/error.hpp"
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 #include "utils.hpp"
@@ -10,12 +11,7 @@
 
 void test_let_statement(ast::statement* stmt, const std::string name) {
     REQUIRE(stmt->token_literal() == "let");
-    ast::let_stmt* let_stmt;
-    REQUIRE_NOTHROW(let_stmt = dynamic_cast<ast::let_stmt*>(stmt));
-    REQUIRE_MESSAGE(
-        let_stmt != nullptr,
-        "Couldn't cast statement to a let statement"
-    );
+    ast::let_stmt* let_stmt = cast<ast::let_stmt>(stmt);
 
     REQUIRE(let_stmt->name->value == name);
     REQUIRE(let_stmt->name->token_literal() == name);
@@ -38,13 +34,8 @@ void test_failing_let_parsing(
 
     int i = 0;
     for (auto& e : p.errors) {
-        ast::error::expected_next* en;
+        ast::error::expected_next* en = cast<ast::error::expected_next>(e);
 
-        REQUIRE_NOTHROW(en = dynamic_cast<ast::error::expected_next*>(e));
-        REQUIRE_MESSAGE(
-            en != nullptr,
-            "Couldn't cast the error to an 'expected_next'"
-        );
         REQUIRE(en->expected_type == expected_types[i++]);
     }
 
