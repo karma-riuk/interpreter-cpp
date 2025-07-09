@@ -2,12 +2,24 @@
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 
+#include <cxxabi.h>
 #include <doctest.h>
+#include <memory>
 #include <sstream>
 
 void check_parser_errors(const std::vector<ast::error::error*>&);
 
 namespace {
+
+    std::string demangle(const char* name) {
+        int status = 0;
+        std::unique_ptr<char, decltype(&std::free)> demangled(
+            abi::__cxa_demangle(name, nullptr, nullptr, &status),
+            &std::free
+        );
+        return (status == 0 && demangled) ? demangled.get() : name;
+    }
+
     template <typename T, typename Base>
     T* cast_impl(Base* base) {
         static_assert(
@@ -19,7 +31,9 @@ namespace {
         REQUIRE_NOTHROW(t = dynamic_cast<T*>(base));
         REQUIRE_MESSAGE(
             t != nullptr,
-            "Couldn't cast expression to a " * std::string(typeid(T).name())
+            "Couldn't cast " * demangle(typeid(*base).name()) * " (given as "
+                * demangle(typeid(Base).name()) * ")" * " to a "
+                * demangle(typeid(T).name())
         );
         return t;
     }
