@@ -7,11 +7,14 @@ void check_parser_errors(const std::vector<ast::error::error*>& errors) {
     if (errors.empty())
         return;
 
-    std::cerr << "parser has " << errors.size() << " errors:\n";
-    for (const auto& error : errors)
-        std::cerr << '\t' << error->what() << "\n";
+    INFO("parser has " << errors.size() << " errors:");
+    std::ostringstream combined;
+    for (auto& err : errors)
+        combined << "  > " << err->what() << '\n';
 
-    FAIL_CHECK("Parser had errors. See stderr for details.");
+    INFO(combined.str());
+
+    FAIL("Parser had errors.");
 }
 
 void ParserFixture::setup(std::string source) {
