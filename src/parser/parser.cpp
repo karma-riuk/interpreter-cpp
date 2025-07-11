@@ -2,6 +2,7 @@
 
 #include "ast/errors/error.hpp"
 #include "ast/expressions/identifier.hpp"
+#include "ast/expressions/infix.hpp"
 #include "ast/expressions/integer.hpp"
 #include "ast/expressions/prefix.hpp"
 #include "token/token.hpp"
@@ -35,6 +36,40 @@ namespace parser {
         register_prefix(
             token::type::MINUS,
             std::bind(&parser::parse_prefix_expr, this)
+        );
+
+        using namespace std::placeholders;
+        register_infix(
+            token::type::PLUS,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::MINUS,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::ASTERISK,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::SLASH,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::EQ,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::NEQ,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::GT,
+            std::bind(&parser::parse_infix_expr, this, _1)
+        );
+        register_infix(
+            token::type::LT,
+            std::bind(&parser::parse_infix_expr, this, _1)
         );
     }
 
@@ -72,15 +107,27 @@ namespace parser {
         }
     }
 
-    ast::expression* parser::parse_expression(precedence) {
-        auto it = prefix_parse_fns.find(current.type);
-        if (it == prefix_parse_fns.end()) {
+    ast::expression* parser::parse_expression(precedence prec) {
+        auto prefix_it = prefix_parse_fns.find(current.type);
+        if (prefix_it == prefix_parse_fns.end()) {
             unkown_prefix_error(current);
             return nullptr;
         }
 
-        prefix_parse_fn func = it->second;
-        return func();
+        prefix_parse_fn prefix = prefix_it->second;
+        ast::expression* left = prefix();
+
+        while (next.type != token::type::SEMICOLON
+               && prec < precedence_for(next.type)) {
+            auto infix_it = infix_parse_fns.find(next.type);
+            if (infix_it == infix_parse_fns.end())
+                return left;
+            next_token();
+
+            infix_parse_fn infix = infix_it->second;
+            left = infix(left);
+        }
+        return left;
     };
 
     ast::return_stmt* parser::parse_return() {
@@ -176,6 +223,15 @@ namespace parser {
         ast::prefix_expr* ret = new ast::prefix_expr(current, current.literal);
         next_token();
         ret->right = parse_expression(precedence::PREFIX);
+        return ret;
+    };
+
+    ast::expression* parser::parse_infix_expr(ast::expression* left) {
+        ast::infix_expr* ret =
+            new ast::infix_expr(current, current.literal, left);
+        precedence prec = precedence_for(current.type);
+        next_token();
+        ret->right = parse_expression(prec);
         return ret;
     };
 } // namespace parser

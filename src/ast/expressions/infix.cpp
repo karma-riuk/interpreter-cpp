@@ -4,6 +4,13 @@
 
 namespace ast {
 
+    infix_expr::infix_expr(
+        token::token token, std::string op, ast::expression* left
+    )
+        : token(std::move(token)),
+          op(op),
+          left(left) {}
+
     std::string infix_expr::token_literal() const {
         return token.literal;
     }
