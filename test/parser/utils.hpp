@@ -2,6 +2,7 @@
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 
+#include <any>
 #include <cxxabi.h>
 #include <doctest.h>
 #include <memory>
@@ -60,3 +61,8 @@ struct ParserFixture {
 
     void setup(std::string);
 };
+
+void test_identifier(ast::expression*, std::string);
+void test_integer_literal(ast::expression*, int);
+void test_literal_expression(ast::expression*, std::any&);
+void test_infix_expression(ast::expression*, std::any, std::string, std::any);

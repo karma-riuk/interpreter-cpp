@@ -1,5 +1,9 @@
 #include "utils.hpp"
 
+#include "ast/expressions/identifier.hpp"
+#include "ast/expressions/infix.hpp"
+#include "ast/expressions/integer.hpp"
+
 #include <doctest.h>
 
 void check_parser_errors(const std::vector<ast::error::error*>& errors) {
@@ -30,4 +34,44 @@ void ParserFixture::setup(std::string source) {
         program != nullptr,
         "parse_program() returned a null pointer"
     );
+}
+
+void test_integer_literal(ast::expression* expr, int value) {
+    ast::integer_literal* int_lit = cast<ast::integer_literal>(expr);
+
+    REQUIRE(int_lit->value == value);
+    std::ostringstream oss;
+    oss << value;
+    REQUIRE(int_lit->token_literal() == oss.str());
+}
+
+void test_identifier(ast::expression* expr, std::string value) {
+    ast::identifier* ident = cast<ast::identifier>(expr);
+
+    REQUIRE(ident->value == value);
+    REQUIRE(ident->token_literal() == value);
+}
+
+void test_literal_expression(ast::expression* exp, std::any& expected) {
+    if (expected.type() == typeid(int))
+        return test_integer_literal(exp, std::any_cast<int>(expected));
+    if (expected.type() == typeid(std::string))
+        return test_identifier(exp, std::any_cast<std::string>(expected));
+    if (expected.type() == typeid(const char*))
+        return test_identifier(exp, std::any_cast<const char*>(expected));
+
+    FAIL(
+        "Type of exp not handled. Got: " * demangle(typeid(*exp).name())
+        * " as expression and " * demangle(expected.type().name())
+        * " as expected"
+    );
+}
+
+void test_infix_expression(
+    ast::expression* exp, std::any left, std::string op, std::any right
+) {
+    ast::infix_expr* op_exp = cast<ast::infix_expr>(exp);
+    test_literal_expression(op_exp->left, left);
+    CHECK(op_exp->op == op);
+    test_literal_expression(op_exp->right, right);
 }

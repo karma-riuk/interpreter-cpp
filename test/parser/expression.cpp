@@ -1,20 +1,9 @@
 #include "ast/expressions/identifier.hpp"
 #include "ast/expressions/infix.hpp"
-#include "ast/expressions/integer.hpp"
 #include "ast/expressions/prefix.hpp"
 #include "utils.hpp"
 
 #include <doctest.h>
-#include <sstream>
-
-void test_integer_literal(ast::expression* expr, int value) {
-    ast::integer_literal* int_lit = cast<ast::integer_literal>(expr);
-
-    REQUIRE(int_lit->value == value);
-    std::ostringstream oss;
-    oss << value;
-    REQUIRE(int_lit->token_literal() == oss.str());
-}
 
 TEST_SUITE("Parser: expression") {
     TEST_CASE_FIXTURE(
@@ -78,15 +67,16 @@ TEST_SUITE("Parser: expression") {
     SUBCASE(name) {                                                            \
         setup(input);                                                          \
         REQUIRE(program->statements.size() == 1);                              \
+                                                                               \
         ast::expression_stmt* expression_stmt =                                \
             cast<ast::expression_stmt>(program->statements[0]);                \
                                                                                \
-        ast::infix_expr* infix_expr =                                          \
-            cast<ast::infix_expr>(expression_stmt->expression);                \
-                                                                               \
-        test_integer_literal(infix_expr->left, _left);                         \
-        REQUIRE(infix_expr->op == _op);                                        \
-        test_integer_literal(infix_expr->right, _right);                       \
+        test_infix_expression(                                                 \
+            expression_stmt->expression,                                       \
+            _left,                                                             \
+            _op,                                                               \
+            _right                                                             \
+        );                                                                     \
     }
         CASE("Infix: '+'", "5 + 5;", 5, "+", 5);
         CASE("Infix: '-'", "5- 5;", 5, "-", 5);
@@ -96,6 +86,7 @@ TEST_SUITE("Parser: expression") {
         CASE("Infix: '>'", "25 > 15;", 25, ">", 15);
         CASE("Infix: '=='", "5 == 5;", 5, "==", 5);
         CASE("Infix: '!='", "15 != 5;", 15, "!=", 5);
+        CASE("Infix: between identifiers", "alice * bob;", "alice", "*", "bob");
 #undef CASE
     }
 
