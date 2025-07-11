@@ -1,4 +1,5 @@
 #include "ast/expressions/identifier.hpp"
+#include "ast/expressions/infix.hpp"
 #include "ast/expressions/integer.hpp"
 #include "ast/expressions/prefix.hpp"
 #include "utils.hpp"
@@ -69,5 +70,32 @@ TEST_SUITE("Parser: expression") {
 #undef CASE
     }
 
+    TEST_CASE_FIXTURE(
+        ParserFixture,
+        "Simple expression statement with infix between integers"
+    ) {
+#define CASE(name, input, _left, _op, _right)                                  \
+    SUBCASE(name) {                                                            \
+        setup(input);                                                          \
+        REQUIRE(program->statements.size() == 1);                              \
+        ast::expression_stmt* expression_stmt =                                \
+            cast<ast::expression_stmt>(program->statements[0]);                \
+                                                                               \
+        ast::infix_expr* infix_expr =                                          \
+            cast<ast::infix_expr>(expression_stmt->expression);                \
+                                                                               \
+        test_integer_literal(infix_expr->left, _left);                         \
+        REQUIRE(infix_expr->op == _op);                                        \
+        test_integer_literal(infix_expr->right, _right);                       \
+    }
+        CASE("Infix: '+'", "5 + 5;", 5, "+", 5);
+        CASE("Infix: '-'", "5- 5;", 5, "-", 5);
+        CASE("Infix: '*'", "15 *5;", 15, "*", 5);
+        CASE("Infix: '/'", "15 / 5;", 15, "/", 5);
+        CASE("Infix: '<'", "15 < 15;", 15, "<", 15);
+        CASE("Infix: '>'", "25 > 15;", 25, ">", 15);
+        CASE("Infix: '=='", "5 == 5;", 5, "==", 5);
+        CASE("Infix: '!='", "15 == 5;", 15, "!=", 5);
+#undef CASE
     }
 }
