@@ -41,13 +41,8 @@ namespace {
 
 // Overloads for your known base types
 template <typename T>
-T* cast(ast::expression* expr) {
-    return cast_impl<T, ast::expression>(expr);
-}
-
-template <typename T>
-T* cast(ast::statement* stmt) {
-    return cast_impl<T, ast::statement>(stmt);
+T* cast(ast::node* stmt) {
+    return cast_impl<T, ast::node>(stmt);
 }
 
 template <typename T>
