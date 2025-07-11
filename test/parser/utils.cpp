@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include "ast/expressions/boolean.hpp"
 #include "ast/expressions/identifier.hpp"
 #include "ast/expressions/infix.hpp"
 #include "ast/expressions/integer.hpp"
@@ -36,6 +37,13 @@ void ParserFixture::setup(std::string source) {
     );
 }
 
+void test_identifier(ast::expression* expr, std::string value) {
+    ast::identifier* ident = cast<ast::identifier>(expr);
+
+    REQUIRE(ident->value == value);
+    REQUIRE(ident->token_literal() == value);
+}
+
 void test_integer_literal(ast::expression* expr, int value) {
     ast::integer_literal* int_lit = cast<ast::integer_literal>(expr);
 
@@ -45,16 +53,20 @@ void test_integer_literal(ast::expression* expr, int value) {
     REQUIRE(int_lit->token_literal() == oss.str());
 }
 
-void test_identifier(ast::expression* expr, std::string value) {
-    ast::identifier* ident = cast<ast::identifier>(expr);
+void test_boolean_literal(ast::expression* expr, bool value) {
+    ast::boolean_literal* bool_lit = cast<ast::boolean_literal>(expr);
 
-    REQUIRE(ident->value == value);
-    REQUIRE(ident->token_literal() == value);
+    REQUIRE(bool_lit->value == value);
+    std::ostringstream oss;
+    oss << value;
+    REQUIRE(bool_lit->token_literal() == oss.str());
 }
 
 void test_literal_expression(ast::expression* exp, std::any& expected) {
     if (expected.type() == typeid(int))
         return test_integer_literal(exp, std::any_cast<int>(expected));
+    if (expected.type() == typeid(bool))
+        return test_boolean_literal(exp, std::any_cast<bool>(expected));
     if (expected.type() == typeid(std::string))
         return test_identifier(exp, std::any_cast<std::string>(expected));
     if (expected.type() == typeid(const char*))

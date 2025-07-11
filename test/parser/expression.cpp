@@ -35,6 +35,50 @@ TEST_SUITE("Parser: expression") {
         test_integer_literal(expression_stmt->expression, 5);
     };
 
+    TEST_CASE_FIXTURE(ParserFixture, "Simple statements with booleans") {
+        SUBCASE("True literal") {
+            setup("true;");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::expression_stmt* expression_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            test_boolean_literal(expression_stmt->expression, true);
+        }
+
+        SUBCASE("False literal") {
+            setup("false;");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::expression_stmt* expression_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            test_boolean_literal(expression_stmt->expression, false);
+        }
+
+        SUBCASE("True let statement") {
+            setup("let foo = true;");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::let_stmt* let_stmt =
+                cast<ast::let_stmt>(program->statements[0]);
+
+            CHECK(let_stmt->name->value == "foo");
+            test_boolean_literal(let_stmt->value, true);
+        }
+
+        SUBCASE("False let statement") {
+            setup("let bar = false;");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::let_stmt* let_stmt =
+                cast<ast::let_stmt>(program->statements[0]);
+
+            CHECK(let_stmt->name->value == "bar");
+            test_boolean_literal(let_stmt->value, false);
+        }
+    }
+
     TEST_CASE_FIXTURE(
         ParserFixture,
         "Simple expression statement with prefix before integer"
@@ -89,7 +133,6 @@ TEST_SUITE("Parser: expression") {
         CASE("Infix: between identifiers", "alice * bob;", "alice", "*", "bob");
 #undef CASE
     }
-
 
     TEST_CASE_FIXTURE(ParserFixture, "Slightly more complex infix expression") {
         setup("5 - -15;");
