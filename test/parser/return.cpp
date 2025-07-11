@@ -8,13 +8,14 @@ TEST_SUITE("Parser: return") {
 return 5;\
 return 10;\
 return 103213;\
+return 12 + 34;\
 ");
 
-        REQUIRE(program->statements.size() == 3);
+        REQUIRE(program->statements.size() == 4);
 
         for (const auto stmt : program->statements) {
-            REQUIRE(stmt->token_literal() == "return");
-            ast::return_stmt* return_stmt = cast<ast::return_stmt>(stmt);
+            CHECK(stmt->token_literal() == "return");
+            cast<ast::return_stmt>(stmt);
         }
     }
 }
