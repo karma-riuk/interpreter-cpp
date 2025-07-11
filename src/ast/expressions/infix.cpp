@@ -9,7 +9,7 @@ namespace ast {
     }
 
     std::string infix_expr::str() const {
-        return left->str() + token.literal + right->str();
+        return "(" + left->str() + " " + op + " " + right->str() + ")";
     }
 
     infix_expr::~infix_expr() {
