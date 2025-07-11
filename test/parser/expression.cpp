@@ -205,4 +205,11 @@ TEST_SUITE("Parser: expression") {
             CHECK(program->str() == t.expected);
         }
     }
+
+    TEST_CASE_FIXTURE(ParserFixture, "Test to see trace") {
+        setup("-1 * 2 - 3");
+        CHECK(program->str() == "(((-1) * 2) - 3)");
+        setup("-1 - 2 * 3");
+        CHECK(program->str() == "((-1) - (2 * 3))");
+    }
 }
