@@ -49,32 +49,25 @@ TEST_SUITE("Parser: expression") {
         ParserFixture,
         "Simple expression statement with prefix before integer"
     ) {
-        SUBCASE("Prefix: '!'") {
-            setup("!5;");
+#define CASE(name, input, _op, _right)                                         \
+    SUBCASE(name) {                                                            \
+        setup(input);                                                          \
+                                                                               \
+        REQUIRE(program->statements.size() == 1);                              \
+        ast::expression_stmt* expression_stmt =                                \
+            cast<ast::expression_stmt>(program->statements[0]);                \
+                                                                               \
+        ast::prefix_expr* prefix_expr =                                        \
+            cast<ast::prefix_expr>(expression_stmt->expression);               \
+                                                                               \
+        REQUIRE(prefix_expr->op == _op);                                       \
+        test_integer_literal(prefix_expr->right, _right);                      \
+    }
 
-            REQUIRE(program->statements.size() == 1);
-            ast::expression_stmt* expression_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+        CASE("Prefix: '!'", "!5;", "!", 5);
+        CASE("Prefix: '-'", "-15;", "-", 15);
+#undef CASE
+    }
 
-            ast::prefix_expr* prefix_expr =
-                cast<ast::prefix_expr>(expression_stmt->expression);
-
-            REQUIRE(prefix_expr->op == "!");
-            test_integer_literal(prefix_expr->right, 5);
-        }
-
-        SUBCASE("Prefix: '-'") {
-            setup("-15;");
-
-            REQUIRE(program->statements.size() == 1);
-            ast::expression_stmt* expression_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
-
-            ast::prefix_expr* prefix_expr =
-                cast<ast::prefix_expr>(expression_stmt->expression);
-
-            REQUIRE(prefix_expr->op == "-");
-            test_integer_literal(prefix_expr->right, 15);
-        }
     }
 }
