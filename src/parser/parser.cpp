@@ -31,56 +31,31 @@ namespace parser {
         );
 
         register_prefix(
-            token::type::BANG,
+            {
+                token::type::BANG,
+                token::type::MINUS,
+            },
             std::bind(&parser::parse_prefix_expr, this)
         );
 
         register_prefix(
-            token::type::MINUS,
-            std::bind(&parser::parse_prefix_expr, this)
-        );
-
-        register_prefix(
-            token::type::TRUE,
-            std::bind(&parser::parse_boolean, this)
-        );
-
-        register_prefix(
-            token::type::FALSE,
+            {
+                token::type::TRUE,
+                token::type::FALSE,
+            },
             std::bind(&parser::parse_boolean, this)
         );
 
         using namespace std::placeholders;
         register_infix(
-            token::type::PLUS,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::MINUS,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::ASTERISK,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::SLASH,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::EQ,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::NEQ,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::GT,
-            std::bind(&parser::parse_infix_expr, this, _1)
-        );
-        register_infix(
-            token::type::LT,
+            {token::type::PLUS,
+             token::type::MINUS,
+             token::type::ASTERISK,
+             token::type::SLASH,
+             token::type::EQ,
+             token::type::NEQ,
+             token::type::GT,
+             token::type::LT},
             std::bind(&parser::parse_infix_expr, this, _1)
         );
     }
@@ -221,8 +196,21 @@ namespace parser {
         prefix_parse_fns[type] = fn;
     };
 
+    void parser::register_prefix(
+        std::vector<token::type> types, prefix_parse_fn fn
+    ) {
+        for (auto& type : types)
+            register_prefix(type, fn);
+    };
+
     void parser::register_infix(token::type type, infix_parse_fn fn) {
         infix_parse_fns[type] = fn;
+    };
+
+    void
+    parser::register_infix(std::vector<token::type> types, infix_parse_fn fn) {
+        for (auto& type : types)
+            register_infix(type, fn);
     };
 
     ast::expression* parser::parse_identifier() {

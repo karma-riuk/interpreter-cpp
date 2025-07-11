@@ -45,7 +45,9 @@ namespace parser {
         void unkown_prefix_error(token::token);
 
         void register_prefix(token::type, prefix_parse_fn);
+        void register_prefix(std::vector<token::type>, prefix_parse_fn);
         void register_infix(token::type, infix_parse_fn);
+        void register_infix(std::vector<token::type>, infix_parse_fn);
 
         ast::expression* parse_identifier();
         ast::expression* parse_integer();
