@@ -22,8 +22,6 @@ namespace ast {
         if (expression != nullptr)
             ss << expression->str();
 
-        ss << ';';
-
         return ss.str();
     };
 } // namespace ast
