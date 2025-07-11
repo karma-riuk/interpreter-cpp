@@ -95,7 +95,7 @@ TEST_SUITE("Parser: expression") {
         CASE("Infix: '<'", "15 < 15;", 15, "<", 15);
         CASE("Infix: '>'", "25 > 15;", 25, ">", 15);
         CASE("Infix: '=='", "5 == 5;", 5, "==", 5);
-        CASE("Infix: '!='", "15 == 5;", 15, "!=", 5);
+        CASE("Infix: '!='", "15 != 5;", 15, "!=", 5);
 #undef CASE
     }
 }
