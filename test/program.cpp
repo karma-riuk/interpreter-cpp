@@ -1,6 +1,5 @@
 #include "ast/program.hpp"
 
-#include "ast/ast.hpp"
 #include "ast/statements/let.hpp"
 #include "ast/statements/return.hpp"
 #include "token/type.hpp"
