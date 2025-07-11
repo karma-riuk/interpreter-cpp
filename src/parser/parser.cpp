@@ -1,6 +1,7 @@
 #include "parser.hpp"
 
 #include "ast/errors/error.hpp"
+#include "ast/expressions/boolean.hpp"
 #include "ast/expressions/identifier.hpp"
 #include "ast/expressions/infix.hpp"
 #include "ast/expressions/integer.hpp"
@@ -37,6 +38,16 @@ namespace parser {
         register_prefix(
             token::type::MINUS,
             std::bind(&parser::parse_prefix_expr, this)
+        );
+
+        register_prefix(
+            token::type::TRUE,
+            std::bind(&parser::parse_boolean, this)
+        );
+
+        register_prefix(
+            token::type::FALSE,
+            std::bind(&parser::parse_boolean, this)
         );
 
         using namespace std::placeholders;
@@ -221,6 +232,14 @@ namespace parser {
     ast::expression* parser::parse_integer() {
         // TRACE_FUNCTION;
         return new ast::integer_literal(current, std::stoi(current.literal));
+    };
+
+    ast::expression* parser::parse_boolean() {
+        // TRACE_FUNCTION;
+        return new ast::boolean_literal(
+            current,
+            current.type == token::type::TRUE
+        );
     };
 
     ast::expression* parser::parse_prefix_expr() {

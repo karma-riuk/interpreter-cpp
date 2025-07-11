@@ -49,6 +49,7 @@ namespace parser {
 
         ast::expression* parse_identifier();
         ast::expression* parse_integer();
+        ast::expression* parse_boolean();
         ast::expression* parse_prefix_expr();
 
         ast::expression* parse_infix_expr(ast::expression*);

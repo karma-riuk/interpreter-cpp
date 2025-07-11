@@ -58,7 +58,7 @@ void test_boolean_literal(ast::expression* expr, bool value) {
 
     REQUIRE(bool_lit->value == value);
     std::ostringstream oss;
-    oss << value;
+    oss << (value ? "true" : "false");
     REQUIRE(bool_lit->token_literal() == oss.str());
 }
 
