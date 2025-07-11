@@ -16,4 +16,8 @@ namespace ast {
     std::string prefix_expr::str() const {
         return token.literal + right->str();
     }
+
+    prefix_expr::~prefix_expr() {
+        delete right;
+    };
 } // namespace ast

@@ -12,5 +12,6 @@ namespace ast {
 
         std::string token_literal() const override;
         std::string str() const override;
+        ~prefix_expr();
     };
 } // namespace ast
