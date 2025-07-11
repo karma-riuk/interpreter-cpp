@@ -52,13 +52,11 @@ T* cast(ast::error::error* err) {
 
 struct ParserFixture {
     std::stringstream input;
-    lexer::lexer* lexer = nullptr;
-    parser::parser* parser = nullptr;
-    ast::program* program = nullptr;
+    std::unique_ptr<lexer::lexer> lexer;
+    std::unique_ptr<parser::parser> parser;
+    std::unique_ptr<ast::program> program;
 
     ParserFixture() = default;
 
     void setup(std::string);
-
-    ~ParserFixture();
 };

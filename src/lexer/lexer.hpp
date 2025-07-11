@@ -6,6 +6,7 @@
 
 namespace lexer {
     struct lexer {
+        lexer(std::istream&);
         std::istream& input;
         char c = 0;
         token::token next_token();

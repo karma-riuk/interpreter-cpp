@@ -84,8 +84,8 @@ namespace parser {
              next_token()) {};
     }
 
-    ast::program* parser::parse_program() {
-        ast::program* p = new ast::program();
+    std::unique_ptr<ast::program> parser::parse_program() {
+        std::unique_ptr<ast::program> p = std::make_unique<ast::program>();
 
         for (; current.type != token::type::END_OF_FILE; next_token()) {
             ast::statement* stmt = parse_statement();

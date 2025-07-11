@@ -7,6 +7,7 @@
 #include "utils.hpp"
 
 #include <doctest.h>
+#include <memory>
 #include <sstream>
 
 void test_let_statement(ast::statement* stmt, const std::string name) {
@@ -27,7 +28,7 @@ void test_failing_let_parsing(
     lexer::lexer l{input};
     parser::parser p{l};
 
-    ast::program* program = p.parse_program();
+    std::unique_ptr<ast::program> program = p.parse_program();
 
     // Check for errors
     REQUIRE(p.errors.size() == expected_types.size());
@@ -45,7 +46,6 @@ void test_failing_let_parsing(
         "parse_program() returned a null pointer"
     );
     REQUIRE(program->statements.size() == n_good_statements);
-    delete program;
 }
 
 TEST_SUITE("Parser: let") {

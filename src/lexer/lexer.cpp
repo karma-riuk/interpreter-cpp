@@ -7,6 +7,8 @@
 #include <iostream>
 
 namespace lexer {
+    lexer::lexer(std::istream& input): input(input) {}
+
     token::token lexer::next_token() {
         if (!(input >> c))
             return {token::type::END_OF_FILE, ""};

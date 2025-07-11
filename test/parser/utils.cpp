@@ -18,8 +18,8 @@ void check_parser_errors(const std::vector<ast::error::error*>& errors) {
 
 void ParserFixture::setup(std::string source) {
     input << source;
-    lexer = new lexer::lexer{input};
-    parser = new parser::parser(*lexer);
+    lexer = std::make_unique<lexer::lexer>(input);
+    parser = std::make_unique<parser::parser>(*lexer);
     program = parser->parse_program();
     check_parser_errors(parser->errors);
 
@@ -29,10 +29,4 @@ void ParserFixture::setup(std::string source) {
         program != nullptr,
         "parse_program() returned a null pointer"
     );
-}
-
-ParserFixture::~ParserFixture() {
-    delete lexer;
-    delete parser;
-    delete program;
 }

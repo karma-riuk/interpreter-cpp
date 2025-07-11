@@ -11,6 +11,7 @@
 #include "token/token.hpp"
 
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace parser {
@@ -23,7 +24,7 @@ namespace parser {
         ~parser();
         std::vector<ast::error::error*> errors;
 
-        ast::program* parse_program();
+        std::unique_ptr<ast::program> parse_program();
 
       private:
         lexer::lexer& lexer;
