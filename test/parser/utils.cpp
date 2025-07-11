@@ -17,6 +17,7 @@ void check_parser_errors(const std::vector<ast::error::error*>& errors) {
 }
 
 void ParserFixture::setup(std::string source) {
+    input.clear();
     input << source;
     lexer = std::make_unique<lexer::lexer>(input);
     parser = std::make_unique<parser::parser>(*lexer);
