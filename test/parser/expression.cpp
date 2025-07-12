@@ -131,6 +131,8 @@ TEST_SUITE("Parser: expression") {
         CASE("Infix: '=='", "5 == 5;", 5, "==", 5);
         CASE("Infix: '!='", "15 != 5;", 15, "!=", 5);
         CASE("Infix: between identifiers", "alice * bob;", "alice", "*", "bob");
+        CASE("Infix: between booleans", "true == bob;", true, "==", "bob");
+        CASE("Infix: between booleans", "true != false;", true, "!=", false);
 #undef CASE
     }
 
@@ -232,6 +234,8 @@ TEST_SUITE("Parser: expression") {
             {"5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"},
             {"3 + 4 * 5 == 3 * 1 + 4 * 5",
              "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"},
+            {"3 > 5 == false", "((3 > 5) == false)"},
+            {"3 < 5 == true", "((3 < 5) == true)"},
         };
 
         for (auto& t : tests) {
