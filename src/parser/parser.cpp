@@ -46,6 +46,11 @@ namespace parser {
             std::bind(&parser::parse_boolean, this)
         );
 
+        register_prefix(
+            token::type::LPAREN,
+            std::bind(&parser::parse_grouped_expr, this)
+        );
+
         using namespace std::placeholders;
         register_infix(
             {token::type::PLUS,
@@ -235,6 +240,19 @@ namespace parser {
         ast::prefix_expr* ret = new ast::prefix_expr(current, current.literal);
         next_token();
         ret->right = parse_expression(precedence::PREFIX);
+        return ret;
+    };
+
+    ast::expression* parser::parse_grouped_expr() {
+        // TRACE_FUNCTION;
+        next_token();
+        ast::expression* ret = parse_expression(precedence::LOWEST);
+
+        if (!expect_next(token::type::RPAREN)) {
+            delete ret;
+            return nullptr;
+        }
+
         return ret;
     };
 
