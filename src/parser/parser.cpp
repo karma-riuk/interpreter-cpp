@@ -3,9 +3,11 @@
 #include "ast/errors/error.hpp"
 #include "ast/expressions/boolean.hpp"
 #include "ast/expressions/identifier.hpp"
+#include "ast/expressions/if_then_else.hpp"
 #include "ast/expressions/infix.hpp"
 #include "ast/expressions/integer.hpp"
 #include "ast/expressions/prefix.hpp"
+#include "ast/statements/block.hpp"
 #include "token/token.hpp"
 #include "token/type.hpp"
 #include "utils/tracer.hpp"
@@ -49,6 +51,11 @@ namespace parser {
         register_prefix(
             token::type::LPAREN,
             std::bind(&parser::parse_grouped_expr, this)
+        );
+
+        register_prefix(
+            token::type::IF,
+            std::bind(&parser::parse_if_then_else, this)
         );
 
         using namespace std::placeholders;
@@ -255,6 +262,59 @@ namespace parser {
 
         return ret;
     };
+
+    ast::expression* parser::parse_if_then_else() {
+        // TRACE_FUNCTION;
+        ast::if_then_else* ret = new ast::if_then_else(current);
+        if (!expect_next(token::type::LPAREN)) {
+            delete ret;
+            return nullptr;
+        }
+
+        next_token();
+        ret->condition = parse_expression();
+
+        if (!expect_next(token::type::RPAREN)) {
+            delete ret;
+            return nullptr;
+        }
+
+        if (!expect_next(token::type::LBRACE)) {
+            delete ret;
+            return nullptr;
+        }
+
+        ret->consequence = parse_block();
+        if (next.type != token::type::ELSE)
+            return ret;
+        next_token();
+
+        if (!expect_next(token::type::LBRACE)) {
+            delete ret;
+            return nullptr;
+        }
+
+        ret->alternative = parse_block();
+        return ret;
+    };
+
+    ast::block_stmt* parser::parse_block() {
+        // TRACE_FUNCTION;
+        ast::block_stmt* ret = new ast::block_stmt(current);
+        //     ret->statements.push_back(parse_statement());
+        next_token();
+        int i = 0;
+        while (current.type != token::type::RBRACE && i++ < 10) {
+            // for (next_token(); next.type != token::type::RBRACE;
+            // next_token()) {
+            ast::statement* stmt = parse_statement();
+            if (stmt != nullptr)
+                ret->statements.push_back(stmt);
+            next_token();
+        }
+
+        return ret;
+    }
 
     ast::expression* parser::parse_infix_expr(ast::expression* left) {
         // TRACE_FUNCTION;

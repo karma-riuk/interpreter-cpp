@@ -3,6 +3,7 @@
 #include "ast/ast.hpp"
 #include "ast/errors/error.hpp"
 #include "ast/program.hpp"
+#include "ast/statements/block.hpp"
 #include "ast/statements/expression.hpp"
 #include "ast/statements/let.hpp"
 #include "ast/statements/return.hpp"
@@ -54,6 +55,8 @@ namespace parser {
         ast::expression* parse_boolean();
         ast::expression* parse_prefix_expr();
         ast::expression* parse_grouped_expr();
+        ast::expression* parse_if_then_else();
+        ast::block_stmt* parse_block();
 
         ast::expression* parse_infix_expr(ast::expression*);
     };
