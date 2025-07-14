@@ -248,6 +248,27 @@ namespace parser {
         );
     };
 
+    std::vector<ast::identifier*> parser::parse_function_parameters() {
+        std::vector<ast::identifier*> ret;
+        while (next.type != token::type::RPAREN
+               && expect_next(token::type::IDENTIFIER)) {
+            ret.push_back(parse_identifier());
+            if (next.type == token::type::RPAREN)
+                break;
+            if (!expect_next(token::type::COMMA))
+                return {};
+        }
+        if (current.type == token::type::COMMA
+            && next.type == token::type::RPAREN) {
+            next_error(token::type::IDENTIFIER);
+            return {};
+        }
+        if (!expect_next(token::type::RPAREN))
+            return {};
+
+        return ret;
+    }
+
     ast::function_literal* parser::parse_function() {
         TRACE_FUNCTION;
         ast::function_literal* ret = new ast::function_literal(current);
@@ -256,27 +277,7 @@ namespace parser {
             return nullptr;
         }
 
-        while (next.type != token::type::RPAREN
-               && expect_next(token::type::IDENTIFIER)) {
-            ret->parameters.push_back(parse_identifier());
-            if (next.type == token::type::RPAREN)
-                break;
-            if (!expect_next(token::type::COMMA)) {
-                delete ret;
-                return nullptr;
-            }
-        }
-        if (current.type == token::type::COMMA
-            && next.type == token::type::RPAREN) {
-            next_error(token::type::IDENTIFIER);
-            delete ret;
-            return nullptr;
-        }
-
-        if (!expect_next(token::type::RPAREN)) {
-            delete ret;
-            return nullptr;
-        }
+        ret->parameters = parse_function_parameters();
 
         if (!expect_next(token::type::LBRACE)) {
             delete ret;

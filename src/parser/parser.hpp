@@ -60,6 +60,7 @@ namespace parser {
         ast::identifier* parse_identifier();
         ast::integer_literal* parse_integer();
         ast::boolean_literal* parse_boolean();
+        std::vector<ast::identifier*> parse_function_parameters();
         ast::function_literal* parse_function();
         ast::prefix_expr* parse_prefix_expr();
         ast::expression* parse_grouped_expr();
