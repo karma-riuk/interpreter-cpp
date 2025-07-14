@@ -107,7 +107,7 @@ namespace parser {
     }
 
     ast::expression* parser::parse_expression(precedence prec) {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         auto prefix_it = prefix_parse_fns.find(current.type);
         if (prefix_it == prefix_parse_fns.end()) {
             unkown_prefix_error(current);
@@ -166,7 +166,7 @@ namespace parser {
     }
 
     ast::expression_stmt* parser::parse_expression_stmt() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         ast::expression_stmt* stmt = new ast::expression_stmt(current);
 
         stmt->expression = parse_expression();
@@ -230,12 +230,12 @@ namespace parser {
     };
 
     ast::expression* parser::parse_integer() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         return new ast::integer_literal(current, std::stoi(current.literal));
     };
 
     ast::expression* parser::parse_boolean() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         return new ast::boolean_literal(
             current,
             current.type == token::type::TRUE
@@ -243,7 +243,7 @@ namespace parser {
     };
 
     ast::expression* parser::parse_prefix_expr() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         ast::prefix_expr* ret = new ast::prefix_expr(current, current.literal);
         next_token();
         ret->right = parse_expression(precedence::PREFIX);
@@ -251,7 +251,7 @@ namespace parser {
     };
 
     ast::expression* parser::parse_grouped_expr() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         next_token();
         ast::expression* ret = parse_expression(precedence::LOWEST);
 
@@ -264,7 +264,7 @@ namespace parser {
     };
 
     ast::expression* parser::parse_if_then_else() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         ast::if_then_else* ret = new ast::if_then_else(current);
         if (!expect_next(token::type::LPAREN)) {
             delete ret;
@@ -299,7 +299,7 @@ namespace parser {
     };
 
     ast::block_stmt* parser::parse_block() {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         ast::block_stmt* ret = new ast::block_stmt(current);
         //     ret->statements.push_back(parse_statement());
         next_token();
@@ -317,7 +317,7 @@ namespace parser {
     }
 
     ast::expression* parser::parse_infix_expr(ast::expression* left) {
-        // TRACE_FUNCTION;
+        TRACE_FUNCTION;
         ast::infix_expr* ret =
             new ast::infix_expr(current, current.literal, left);
         precedence prec = precedence_for(current.type);

@@ -1,4 +1,4 @@
-
+#pragma once
 #include <iostream>
 #include <string>
 
@@ -19,4 +19,12 @@ namespace {
     };
 } // namespace
 
+#ifndef TRACE
+#define TRACE 0
+#endif
+
+#if TRACE
 #define TRACE_FUNCTION FunctionTracer tracer(__FUNCTION__);
+#else
+#define TRACE_FUNCTION
+#endif
