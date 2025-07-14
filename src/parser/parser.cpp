@@ -262,18 +262,24 @@ namespace parser {
             if (next.type == token::type::RPAREN)
                 break;
             if (!expect_next(token::type::COMMA)) {
-                // delete ret;
+                delete ret;
                 return nullptr;
             }
         }
+        if (current.type == token::type::COMMA
+            && next.type == token::type::RPAREN) {
+            next_error(token::type::IDENTIFIER);
+            delete ret;
+            return nullptr;
+        }
 
         if (!expect_next(token::type::RPAREN)) {
-            // delete ret;
+            delete ret;
             return nullptr;
         }
 
         if (!expect_next(token::type::LBRACE)) {
-            // delete ret;
+            delete ret;
             return nullptr;
         }
         ret->block = parse_block();
