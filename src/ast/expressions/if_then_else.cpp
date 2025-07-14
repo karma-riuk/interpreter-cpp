@@ -23,8 +23,11 @@ namespace ast {
     };
 
     if_then_else::~if_then_else() {
-        delete condition;
-        delete consequence;
-        delete alternative;
+        if (condition != nullptr)
+            delete condition;
+        if (consequence != nullptr)
+            delete consequence;
+        if (alternative != nullptr)
+            delete alternative;
     }
 } // namespace ast
