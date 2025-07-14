@@ -59,6 +59,11 @@ namespace parser {
             std::bind(&parser::parse_if_then_else, this)
         );
 
+        register_prefix(
+            token::type::FUNCTION,
+            std::bind(&parser::parse_function, this)
+        );
+
         using namespace std::placeholders;
         register_infix(
             {token::type::PLUS,
@@ -241,6 +246,39 @@ namespace parser {
             current,
             current.type == token::type::TRUE
         );
+    };
+
+    ast::function_literal* parser::parse_function() {
+        TRACE_FUNCTION;
+        ast::function_literal* ret = new ast::function_literal(current);
+        if (!expect_next(token::type::LPAREN)) {
+            delete ret;
+            return nullptr;
+        }
+
+        while (next.type != token::type::RPAREN
+               && expect_next(token::type::IDENTIFIER)) {
+            ret->parameters.push_back(parse_identifier());
+            if (next.type == token::type::RPAREN)
+                break;
+            if (!expect_next(token::type::COMMA)) {
+                // delete ret;
+                return nullptr;
+            }
+        }
+
+        if (!expect_next(token::type::RPAREN)) {
+            // delete ret;
+            return nullptr;
+        }
+
+        if (!expect_next(token::type::LBRACE)) {
+            // delete ret;
+            return nullptr;
+        }
+        ret->block = parse_block();
+
+        return ret;
     };
 
     ast::prefix_expr* parser::parse_prefix_expr() {
