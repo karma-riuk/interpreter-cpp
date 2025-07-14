@@ -6,7 +6,77 @@
 #include <doctest.h>
 
 TEST_SUITE("Parser: function") {
-    TEST_CASE("Malformed if then else (checking for memory leaks)") {}
+    TEST_CASE("Malformed function literal (checking for memory leaks)") {
+        SUBCASE("Missing opening paren no param") {
+            test_failing_parsing("fn ) { return 2; }", {token::type::LPAREN});
+        }
+        SUBCASE("Missing opening paren one param") {
+            test_failing_parsing("fn x) { return 2; }", {token::type::LPAREN});
+        }
+        SUBCASE("Missing opening paren two param") {
+            test_failing_parsing(
+                "fn x, y) { return 2; }",
+                {token::type::LPAREN}
+            );
+        }
+
+        SUBCASE("Missing identifier with no closing paren - no param") {
+            test_failing_parsing(
+                "fn ( { return 2; }",
+                {token::type::IDENTIFIER}
+            );
+        }
+
+        SUBCASE("Missing identifier with no closing paren - one param") {
+            test_failing_parsing(
+                "fn (x, { return 2; }",
+                {token::type::IDENTIFIER}
+            );
+        }
+        SUBCASE("Missing identifier with no closing paren - two params") {
+            test_failing_parsing(
+                "fn (x, y, { return 2; }",
+                {token::type::IDENTIFIER}
+            );
+        }
+
+        SUBCASE("Missing identifier with closing paren - one param") {
+            test_failing_parsing(
+                "fn (x,) { return 2; }",
+                {token::type::IDENTIFIER}
+            );
+        }
+        SUBCASE("Missing identifier with closing paren - two params") {
+            test_failing_parsing(
+                "fn (x,y,) { return 2; }",
+                {token::type::IDENTIFIER}
+            );
+        }
+
+        SUBCASE("Missing comma with no closing paren one param") {
+            test_failing_parsing("fn (x { return 2; }", {token::type::COMMA});
+        }
+        SUBCASE("Missing closing paren two params") {
+            test_failing_parsing(
+                "fn (x, y { return 2; }",
+                {token::type::COMMA}
+            );
+        }
+
+        SUBCASE("Missing opening brace") {
+            test_failing_parsing(
+                "fn (x, y)  return x + y; }",
+                {token::type::LBRACE}
+            );
+        }
+
+        SUBCASE("Missing closing brace") {
+            test_failing_parsing(
+                "fn (x, y) { return x + y; ",
+                {token::type::RBRACE}
+            );
+        }
+    }
 
     TEST_CASE_FIXTURE(ParserFixture, "Parse well formed function literal") {
         SUBCASE("no param function") {

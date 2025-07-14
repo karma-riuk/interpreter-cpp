@@ -97,6 +97,7 @@ void test_failing_parsing(
     parser::parser p{l};
 
     std::unique_ptr<ast::program> program = p.parse_program();
+    INFO(*program);
 
     // Check for errors
     REQUIRE(p.errors.size() >= expected_types.size());
