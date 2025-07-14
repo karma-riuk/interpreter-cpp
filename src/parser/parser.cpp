@@ -15,6 +15,10 @@
 
 #include <sstream>
 
+#define LOG_CUR_NEXT                                                           \
+    std::cout << "current: " << current << std::endl;                          \
+    std::cout << "next: " << next << std::endl;
+
 namespace parser {
     parser::parser(lexer::lexer& lexer)
         : lexer(lexer),
