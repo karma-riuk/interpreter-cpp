@@ -20,4 +20,10 @@ namespace ast {
             ss << "else" << alternative->str();
         return ss.str();
     };
+
+    if_then_else::~if_then_else() {
+        delete condition;
+        delete consequence;
+        delete alternative;
+    }
 } // namespace ast

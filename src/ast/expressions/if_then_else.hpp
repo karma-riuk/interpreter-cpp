@@ -15,5 +15,6 @@ namespace ast {
 
         std::string token_literal() const override;
         std::string str() const override;
+        ~if_then_else();
     };
 } // namespace ast
