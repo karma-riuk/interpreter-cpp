@@ -6,6 +6,7 @@
 namespace ast {
     if_then_else::if_then_else(token::token token)
         : token(std::move(token)),
+          condition(nullptr),
           consequence(nullptr),
           alternative(nullptr) {};
 
