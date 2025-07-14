@@ -7,7 +7,43 @@
 #include <doctest.h>
 
 TEST_SUITE("Parser: if") {
-    TEST_CASE("Malformed if then else (checking for memory leaks)") {}
+    TEST_CASE("Malformed if then else (checking for memory leaks)") {
+        SUBCASE("Missing open paren") {
+            test_failing_parsing(
+                "if x > 15) {\
+                    return x;\
+                }",
+                {token::type::LPAREN}
+            );
+        }
+
+        SUBCASE("Missing closing paren") {
+            test_failing_parsing(
+                "if (x > 15 {\
+                    return x;\
+                }",
+                {token::type::RPAREN}
+            );
+        }
+
+        SUBCASE("Missing opening brace") {
+            test_failing_parsing(
+                "if (x > 15) \
+                    return x;\
+                }",
+                {token::type::LBRACE}
+            );
+        }
+
+        SUBCASE("Missing closing brace") {
+            test_failing_parsing(
+                "if (x > 15) { \
+                    return x;\
+                ",
+                {token::type::RBRACE}
+            );
+        }
+    }
 
     TEST_CASE_FIXTURE(ParserFixture, "Parse well formed simple if ") {
         setup("\
