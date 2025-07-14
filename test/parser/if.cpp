@@ -8,7 +8,7 @@
 
 TEST_SUITE("Parser: if") {
     TEST_CASE("Malformed if then else (checking for memory leaks)") {
-        SUBCASE("Missing open paren") {
+        SUBCASE("Missing opening paren") {
             test_failing_parsing(
                 "if x > 15) {\
                     return x;\
