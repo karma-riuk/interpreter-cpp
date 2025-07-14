@@ -14,10 +14,6 @@ namespace ast {
         return os << n.str();
     }
 
-    inline std::ostream& operator<<(std::ostream& os, const node* n) {
-        return os << n->str();
-    }
-
     struct statement : node {};
 
     struct expression : node {};
