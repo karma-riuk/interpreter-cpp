@@ -2,6 +2,7 @@
 
 #include "ast/errors/error.hpp"
 #include "ast/expressions/boolean.hpp"
+#include "ast/expressions/function.hpp"
 #include "ast/expressions/identifier.hpp"
 #include "ast/expressions/if_then_else.hpp"
 #include "ast/expressions/infix.hpp"
@@ -225,16 +226,16 @@ namespace parser {
             register_infix(type, fn);
     };
 
-    ast::expression* parser::parse_identifier() {
+    ast::identifier* parser::parse_identifier() {
         return new ast::identifier(current, current.literal);
     };
 
-    ast::expression* parser::parse_integer() {
+    ast::integer_literal* parser::parse_integer() {
         TRACE_FUNCTION;
         return new ast::integer_literal(current, std::stoi(current.literal));
     };
 
-    ast::expression* parser::parse_boolean() {
+    ast::boolean_literal* parser::parse_boolean() {
         TRACE_FUNCTION;
         return new ast::boolean_literal(
             current,
@@ -242,7 +243,7 @@ namespace parser {
         );
     };
 
-    ast::expression* parser::parse_prefix_expr() {
+    ast::prefix_expr* parser::parse_prefix_expr() {
         TRACE_FUNCTION;
         ast::prefix_expr* ret = new ast::prefix_expr(current, current.literal);
         next_token();
@@ -263,7 +264,7 @@ namespace parser {
         return ret;
     };
 
-    ast::expression* parser::parse_if_then_else() {
+    ast::if_then_else* parser::parse_if_then_else() {
         TRACE_FUNCTION;
         ast::if_then_else* ret = new ast::if_then_else(current);
         if (!expect_next(token::type::LPAREN)) {
@@ -320,7 +321,7 @@ namespace parser {
         return ret;
     }
 
-    ast::expression* parser::parse_infix_expr(ast::expression* left) {
+    ast::infix_expr* parser::parse_infix_expr(ast::expression* left) {
         TRACE_FUNCTION;
         ast::infix_expr* ret =
             new ast::infix_expr(current, current.literal, left);

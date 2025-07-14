@@ -2,6 +2,13 @@
 
 #include "ast/ast.hpp"
 #include "ast/errors/error.hpp"
+#include "ast/expressions/boolean.hpp"
+#include "ast/expressions/function.hpp"
+#include "ast/expressions/identifier.hpp"
+#include "ast/expressions/if_then_else.hpp"
+#include "ast/expressions/infix.hpp"
+#include "ast/expressions/integer.hpp"
+#include "ast/expressions/prefix.hpp"
 #include "ast/program.hpp"
 #include "ast/statements/block.hpp"
 #include "ast/statements/expression.hpp"
@@ -50,14 +57,15 @@ namespace parser {
         void register_infix(token::type, infix_parse_fn);
         void register_infix(std::vector<token::type>, infix_parse_fn);
 
-        ast::expression* parse_identifier();
-        ast::expression* parse_integer();
-        ast::expression* parse_boolean();
-        ast::expression* parse_prefix_expr();
+        ast::identifier* parse_identifier();
+        ast::integer_literal* parse_integer();
+        ast::boolean_literal* parse_boolean();
+        ast::function_literal* parse_function();
+        ast::prefix_expr* parse_prefix_expr();
         ast::expression* parse_grouped_expr();
-        ast::expression* parse_if_then_else();
+        ast::if_then_else* parse_if_then_else();
         ast::block_stmt* parse_block();
 
-        ast::expression* parse_infix_expr(ast::expression*);
+        ast::infix_expr* parse_infix_expr(ast::expression*);
     };
 } // namespace parser
