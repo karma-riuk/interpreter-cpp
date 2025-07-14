@@ -301,17 +301,21 @@ namespace parser {
     ast::block_stmt* parser::parse_block() {
         TRACE_FUNCTION;
         ast::block_stmt* ret = new ast::block_stmt(current);
-        //     ret->statements.push_back(parse_statement());
-        next_token();
-        int i = 0;
-        while (current.type != token::type::RBRACE && i++ < 10) {
-            // for (next_token(); next.type != token::type::RBRACE;
-            // next_token()) {
+
+        for (next_token(); current.type != token::type::RBRACE
+                           && current.type != token::type::END_OF_FILE;
+             next_token()) {
             ast::statement* stmt = parse_statement();
             if (stmt != nullptr)
                 ret->statements.push_back(stmt);
-            next_token();
         }
+
+        if (current.type != token::type::RBRACE) {
+            next_error(token::type::RBRACE);
+            delete ret;
+            return nullptr;
+        }
+
 
         return ret;
     }
