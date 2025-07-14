@@ -29,8 +29,6 @@ void ParserFixture::setup(std::string source) {
     program = parser->parse_program();
     check_parser_errors(parser->errors);
 
-    CAPTURE(parser);
-    CAPTURE(program);
     REQUIRE_MESSAGE(
         program != nullptr,
         "parse_program() returned a null pointer"
