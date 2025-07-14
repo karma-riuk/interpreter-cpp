@@ -12,7 +12,7 @@ namespace ast {
         function_literal(token::token);
         token::token token;
         std::vector<identifier*> parameters;
-        ast::block_stmt* block;
+        ast::block_stmt* body;
 
         std::string token_literal() const override;
         std::string str() const override;

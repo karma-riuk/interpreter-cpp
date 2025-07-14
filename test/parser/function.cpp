@@ -98,9 +98,9 @@ fn () {\
             CHECK(fun->parameters.size() == 0);
 
             // block
-            REQUIRE(fun->block->statements.size() == 1);
+            REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->block->statements[0]);
+                cast<ast::return_stmt>(fun->body->statements[0]);
             test_boolean_literal(ret->value, true);
 
             // full string
@@ -127,9 +127,9 @@ fn (x) {\
             test_identifier(fun->parameters[0], "x");
 
             // block
-            REQUIRE(fun->block->statements.size() == 1);
+            REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->block->statements[0]);
+                cast<ast::return_stmt>(fun->body->statements[0]);
             test_infix_expression(ret->value, "x", "+", 1);
 
             // full string
@@ -157,9 +157,9 @@ fn (x, y) {\
             test_identifier(fun->parameters[1], "y");
 
             // block
-            REQUIRE(fun->block->statements.size() == 1);
+            REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->block->statements[0]);
+                cast<ast::return_stmt>(fun->body->statements[0]);
             test_infix_expression(ret->value, "x", "+", "y");
 
             // full string
@@ -192,9 +192,9 @@ let fun = fn (x, y) {\
             test_identifier(fun->parameters[1], "y");
 
             // block
-            REQUIRE(fun->block->statements.size() == 1);
+            REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->block->statements[0]);
+                cast<ast::return_stmt>(fun->body->statements[0]);
             test_infix_expression(ret->value, "x", "+", "y");
 
             // full string

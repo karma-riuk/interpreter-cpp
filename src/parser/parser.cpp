@@ -282,7 +282,7 @@ namespace parser {
             delete ret;
             return nullptr;
         }
-        ret->block = parse_block();
+        ret->body = parse_block();
 
         return ret;
     };
