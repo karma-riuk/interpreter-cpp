@@ -67,3 +67,4 @@ void test_integer_literal(ast::expression*, int);
 void test_boolean_literal(ast::expression*, bool);
 void test_literal_expression(ast::expression*, std::any&);
 void test_infix_expression(ast::expression*, std::any, std::string, std::any);
+void test_failing_parsing(std::string, std::vector<token::type>, int = 0);

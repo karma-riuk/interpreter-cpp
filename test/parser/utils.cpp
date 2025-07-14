@@ -87,3 +87,41 @@ void test_infix_expression(
     CHECK(op_exp->op == op);
     test_literal_expression(op_exp->right, right);
 }
+
+void test_failing_parsing(
+    std::string input_s,
+    std::vector<token::type> expected_types,
+    int n_good_statements
+) {
+    std::stringstream input(input_s);
+
+    lexer::lexer l{input};
+    parser::parser p{l};
+
+    std::unique_ptr<ast::program> program = p.parse_program();
+
+    // Check for errors
+    REQUIRE(p.errors.size() >= expected_types.size());
+    //                      ^^ because even though you were thinking
+    // about a specific token to be there, other `expect_next -> false` might be
+    // triggered for subexpressions due to the first one
+
+    int i = 0;
+    for (auto& t : expected_types) {
+        ast::error::expected_next* en =
+            cast<ast::error::expected_next>(p.errors[i++]);
+
+        REQUIRE(en->expected_type == t);
+    }
+
+    // normal program check
+    REQUIRE_MESSAGE(
+        program != nullptr,
+        "parse_program() returned a null pointer"
+    );
+    REQUIRE(program->statements.size() >= n_good_statements);
+    //                      ^^ because even though you were thinking
+    // about a specific number of statements to be there, it failing for
+    // `expect_next` might trigger a sub-expression to be triggered correctly
+    // and be parsed as the expression_stmt
+}
