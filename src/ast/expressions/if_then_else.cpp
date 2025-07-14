@@ -1,4 +1,3 @@
-
 #include "if_then_else.hpp"
 
 #include <sstream>
