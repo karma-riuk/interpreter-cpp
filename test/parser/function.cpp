@@ -53,13 +53,13 @@ TEST_SUITE("Parser: function") {
             );
         }
 
-        SUBCASE("Missing comma with no closing paren one param") {
-            test_failing_parsing("fn (x { return 2; }", {token::type::COMMA});
+        SUBCASE("Missing closing paren one param") {
+            test_failing_parsing("fn (x { return 2; }", {token::type::RPAREN});
         }
         SUBCASE("Missing closing paren two params") {
             test_failing_parsing(
                 "fn (x, y { return 2; }",
-                {token::type::COMMA}
+                {token::type::RPAREN}
             );
         }
 

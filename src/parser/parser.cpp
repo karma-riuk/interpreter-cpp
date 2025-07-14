@@ -248,23 +248,42 @@ namespace parser {
         );
     };
 
+    static void free_vec(std::vector<ast::identifier*> v) {
+        for (auto& e : v)
+            delete e;
+    }
+
     std::vector<ast::identifier*> parser::parse_function_parameters() {
-        std::vector<ast::identifier*> ret;
-        while (next.type != token::type::RPAREN
-               && expect_next(token::type::IDENTIFIER)) {
-            ret.push_back(parse_identifier());
-            if (next.type == token::type::RPAREN)
-                break;
-            if (!expect_next(token::type::COMMA))
-                return {};
+        if (next.type == token::type::RPAREN) {
+            next_token();
+            return {}; // no params
         }
+
+        std::vector<ast::identifier*> ret;
+        if (!expect_next(token::type::IDENTIFIER))
+            return {};
+        ret.push_back(parse_identifier());
+
+        while (next.type == token::type::COMMA) {
+            next_token();
+            if (!expect_next(token::type::IDENTIFIER)) {
+                free_vec(ret);
+                return {};
+            }
+            ret.push_back(parse_identifier());
+        }
+
         if (current.type == token::type::COMMA
             && next.type == token::type::RPAREN) {
             next_error(token::type::IDENTIFIER);
+            free_vec(ret);
             return {};
         }
-        if (!expect_next(token::type::RPAREN))
+
+        if (!expect_next(token::type::RPAREN)) {
+            free_vec(ret);
             return {};
+        }
 
         return ret;
     }
