@@ -68,5 +68,6 @@ namespace parser {
         ast::block_stmt* parse_block();
 
         ast::infix_expr* parse_infix_expr(ast::expression*);
+        ast::function_call* parse_function_call(ast::expression*);
     };
 } // namespace parser

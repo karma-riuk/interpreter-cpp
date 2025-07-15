@@ -18,4 +18,15 @@ namespace ast {
         std::string str() const override;
         ~function_literal();
     };
+
+    struct function_call : expression {
+        function_call(token::token, expression*);
+        token::token token;
+        expression* target;
+        std::vector<expression*> parameters;
+
+        std::string token_literal() const override;
+        std::string str() const override;
+        ~function_call();
+    };
 } // namespace ast

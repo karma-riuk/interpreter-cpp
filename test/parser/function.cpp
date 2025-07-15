@@ -5,7 +5,7 @@
 
 #include <doctest.h>
 
-TEST_SUITE("Parser: function") {
+TEST_SUITE("Parser: function literal") {
     TEST_CASE("Malformed function literal (checking for memory leaks)") {
         SUBCASE("Missing opening paren no param") {
             test_failing_parsing("fn ) { return 2; }", {token::type::LPAREN});
@@ -199,6 +199,100 @@ let fun = fn (x, y) {\
 
             // full string
             CHECK(fun->str() == "fn (x, y){return (x + y);}");
+        }
+    }
+}
+
+TEST_SUITE("Parser: function call") {
+    TEST_CASE("Malformed function call (checking for memory leaks)") {}
+
+    TEST_CASE_FIXTURE(ParserFixture, "Parse well formed function call") {
+        SUBCASE("no param function") {
+            setup("value();");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::expression_stmt* expr_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            ast::function_call* fun =
+                cast<ast::function_call>(expr_stmt->expression);
+
+            // target
+            test_identifier(fun->target, "value");
+
+            // parameters
+            CHECK(fun->parameters.size() == 0);
+
+            // full string
+            CHECK(fun->str() == "value()");
+        }
+
+        SUBCASE("one param identifier function") {
+            setup("is_odd(1);");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::expression_stmt* expr_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            ast::function_call* fun =
+                cast<ast::function_call>(expr_stmt->expression);
+
+            // target
+            test_identifier(fun->target, "is_odd");
+
+            // parameters
+            CHECK(fun->parameters.size() == 1);
+            test_integer_literal(fun->parameters[0], 1);
+
+            // full string
+            CHECK(fun->str() == "is_odd(1)");
+        }
+
+        SUBCASE("two param function") {
+            setup("is_gt(1, a + 10);");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::expression_stmt* expr_stmt =
+                cast<ast::expression_stmt>(program->statements[0]);
+
+            ast::function_call* fun =
+                cast<ast::function_call>(expr_stmt->expression);
+
+            // target
+            test_identifier(fun->target, "is_gt");
+
+            // parameters
+            CHECK(fun->parameters.size() == 2);
+            test_integer_literal(fun->parameters[0], 1);
+            test_infix_expression(fun->parameters[1], "a", "+", 10);
+
+            // full string
+            CHECK(fun->str() == "is_gt(1, (a + 10))");
+        }
+
+        SUBCASE("two param identifier function assigned to variable") {
+            setup("let res = add(1, a + 10, 2 * 3);");
+            REQUIRE(program->statements.size() == 1);
+
+            ast::let_stmt* let_stmt =
+                cast<ast::let_stmt>(program->statements[0]);
+
+            test_identifier(let_stmt->name, "res");
+
+            ast::function_call* fun = cast<ast::function_call>(let_stmt->value);
+
+            // target
+            test_identifier(fun->target, "add");
+
+            // parameters
+            CHECK(fun->parameters.size() == 3);
+            test_integer_literal(fun->parameters[0], 1);
+            test_infix_expression(fun->parameters[1], "a", "+", 10);
+            test_infix_expression(fun->parameters[2], 2, "*", 3);
+
+            // full string
+            CHECK(fun->str() == "add(1, (a + 10), (2 * 3))");
+            CHECK(let_stmt->str() == "let res = add(1, (a + 10), (2 * 3));");
         }
     }
 }

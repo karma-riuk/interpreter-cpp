@@ -15,6 +15,8 @@ namespace parser {
         case token::type::ASTERISK:
         case token::type::SLASH:
             return precedence::PRODUCT;
+        case token::type::LPAREN:
+            return precedence::CALL;
         default:
             return precedence::LOWEST;
         }

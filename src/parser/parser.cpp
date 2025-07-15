@@ -80,6 +80,11 @@ namespace parser {
              token::type::LT},
             std::bind(&parser::parse_infix_expr, this, _1)
         );
+
+        register_infix(
+            token::type::LPAREN,
+            std::bind(&parser::parse_function_call, this, _1)
+        );
     }
 
     void parser::next_token() {
@@ -396,6 +401,29 @@ namespace parser {
         precedence prec = precedence_for(current.type);
         next_token();
         ret->right = parse_expression(prec);
+        return ret;
+    };
+
+    ast::function_call* parser::parse_function_call(ast::expression* target) {
+        TRACE_FUNCTION;
+        ast::function_call* ret = new ast::function_call(current, target);
+        next_token();
+        if (current.type == token::type::RPAREN)
+            return ret;
+
+        ret->parameters.push_back(parse_expression());
+
+        // parameters
+        while (next.type == token::type::COMMA) {
+            next_token();
+            next_token();
+            ret->parameters.push_back(parse_expression());
+        }
+        if (!expect_next(token::type::RPAREN)) {
+            delete ret;
+            return nullptr;
+        }
+
         return ret;
     };
 } // namespace parser
