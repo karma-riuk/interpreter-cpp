@@ -1,6 +1,8 @@
 #include "ast/expressions/function.hpp"
 
+#include "ast/errors/error.hpp"
 #include "ast/statements/return.hpp"
+#include "token/type.hpp"
 #include "utils.hpp"
 
 #include <doctest.h>
@@ -204,7 +206,44 @@ let fun = fn (x, y) {\
 }
 
 TEST_SUITE("Parser: function call") {
-    TEST_CASE("Malformed function call (checking for memory leaks)") {}
+    TEST_CASE("Malformed function call (checking for memory leaks)") {
+        SUBCASE("missing closing no param function") {
+            std::stringstream input("value(;");
+
+            lexer::lexer l{input};
+            parser::parser p{l};
+
+            std::unique_ptr<ast::program> program = p.parse_program();
+            INFO(*program);
+
+            // Check for errors
+            REQUIRE(p.errors.size() == 2);
+            ast::error::unkown_prefix* up =
+                cast<ast::error::unkown_prefix>(p.errors[0]);
+            REQUIRE(up->prefix.type == token::type::SEMICOLON);
+            ast::error::expected_next* en =
+                cast<ast::error::expected_next>(p.errors[1]);
+            REQUIRE(en->expected_type == token::type::RPAREN);
+
+
+            // normal program check
+            REQUIRE_MESSAGE(
+                program != nullptr,
+                "parse_program() returned a null pointer"
+            );
+        }
+        SUBCASE("missing closing 1 param function") {
+            test_failing_parsing("value(x;", {token::type::RPAREN});
+        }
+
+        SUBCASE("missing closing 2 param function") {
+            test_failing_parsing("value(x, y;", {token::type::RPAREN});
+        }
+
+        SUBCASE("missing comma between 2 param function") {
+            test_failing_parsing("value(x y);", {token::type::RPAREN});
+        }
+    }
 
     TEST_CASE_FIXTURE(ParserFixture, "Parse well formed function call") {
         SUBCASE("no param function") {
