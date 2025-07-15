@@ -1,7 +1,10 @@
 #include "repl.hpp"
 
+#include "ast/program.hpp"
 #include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
 
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -19,11 +22,14 @@ namespace repl {
             std::istringstream ss(line);
 
             lexer::lexer l{ss};
-            for (token::token tok = l.next_token();
-                 tok.type != token::type::END_OF_FILE;
-                 tok = l.next_token())
-                out << tok << " ";
-            out << std::endl;
+            parser::parser p{l};
+            std::unique_ptr<ast::program> program = p.parse_program();
+            if (!p.errors.empty()) {
+                for (auto& e : p.errors)
+                    out << e->what() << std::endl;
+                continue;
+            }
+            out << program->str() << std::endl;
         }
     }
 
