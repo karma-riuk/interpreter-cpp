@@ -65,7 +65,7 @@ namespace parser {
 
         register_prefix(
             token::type::FUNCTION,
-            std::bind(&parser::parse_function, this)
+            std::bind(&parser::parse_function_lit, this)
         );
 
         using namespace std::placeholders;
@@ -292,7 +292,7 @@ namespace parser {
         return ret;
     }
 
-    ast::function_literal* parser::parse_function() {
+    ast::function_literal* parser::parse_function_lit() {
         TRACE_FUNCTION;
         ast::function_literal* ret = new ast::function_literal(current);
         if (!expect_next(token::type::LPAREN)) {
