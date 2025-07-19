@@ -2,6 +2,7 @@
 
 #include "ast/ast.hpp"
 #include "lexer/lexer.hpp"
+#include "object/object.hpp"
 #include "parser/parser.hpp"
 
 #include <any>
@@ -21,9 +22,15 @@ namespace test::utils {
 
         ParserFixture() = default;
 
+        virtual void setup(std::string);
+    };
+
+    struct EvalFixture : ParserFixture {
+        std::unique_ptr<object::object> result;
         void setup(std::string);
     };
 
+    // parser tests
     void test_identifier(ast::expression*, std::string);
     void test_integer_literal(ast::expression*, int);
     void test_boolean_literal(ast::expression*, bool);
@@ -31,6 +38,9 @@ namespace test::utils {
     void
     test_infix_expression(ast::expression*, std::any, std::string, std::any);
     void test_failing_parsing(std::string, std::vector<token::type>, int = 0);
+
+    // eval tests
+    void test_integer_object(object::object*, int);
 
     namespace {
 
@@ -71,6 +81,11 @@ namespace test::utils {
     template <typename T>
     T* cast(ast::error::error* err) {
         return cast_impl<T, ast::error::error>(err);
+    }
+
+    template <typename T>
+    T* cast(object::object* err) {
+        return cast_impl<T, object::object>(err);
     }
 
 } // namespace test::utils

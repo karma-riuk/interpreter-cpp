@@ -1,3 +1,5 @@
+#include "evaluator/evaluator.hpp"
+#include "object/object.hpp"
 #include "utils.hpp"
 
 #include <doctest.h>
@@ -29,5 +31,10 @@ namespace test::utils {
             program != nullptr,
             "parse_program() returned a null pointer"
         );
+    }
+
+    void EvalFixture::setup(std::string source) {
+        ParserFixture::setup(source);
+        result = std::unique_ptr<object::object>(eval::eval(program.get()));
     }
 } // namespace test::utils
