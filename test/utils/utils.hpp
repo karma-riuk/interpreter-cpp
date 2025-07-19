@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ast/ast.hpp"
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
@@ -10,6 +12,25 @@
 
 namespace test::utils {
     void check_parser_errors(const std::vector<ast::error::error*>&);
+
+    struct ParserFixture {
+        std::stringstream input;
+        std::unique_ptr<lexer::lexer> lexer;
+        std::unique_ptr<parser::parser> parser;
+        std::unique_ptr<ast::program> program;
+
+        ParserFixture() = default;
+
+        void setup(std::string);
+    };
+
+    void test_identifier(ast::expression*, std::string);
+    void test_integer_literal(ast::expression*, int);
+    void test_boolean_literal(ast::expression*, bool);
+    void test_literal_expression(ast::expression*, std::any&);
+    void
+    test_infix_expression(ast::expression*, std::any, std::string, std::any);
+    void test_failing_parsing(std::string, std::vector<token::type>, int = 0);
 
     namespace {
 
@@ -52,22 +73,4 @@ namespace test::utils {
         return cast_impl<T, ast::error::error>(err);
     }
 
-    struct ParserFixture {
-        std::stringstream input;
-        std::unique_ptr<lexer::lexer> lexer;
-        std::unique_ptr<parser::parser> parser;
-        std::unique_ptr<ast::program> program;
-
-        ParserFixture() = default;
-
-        void setup(std::string);
-    };
-
-    void test_identifier(ast::expression*, std::string);
-    void test_integer_literal(ast::expression*, int);
-    void test_boolean_literal(ast::expression*, bool);
-    void test_literal_expression(ast::expression*, std::any&);
-    void
-    test_infix_expression(ast::expression*, std::any, std::string, std::any);
-    void test_failing_parsing(std::string, std::vector<token::type>, int = 0);
 } // namespace test::utils

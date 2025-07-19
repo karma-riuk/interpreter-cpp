@@ -1,40 +1,6 @@
 #include "utils.hpp"
 
-#include "ast/expressions/boolean.hpp"
-#include "ast/expressions/identifier.hpp"
-#include "ast/expressions/infix.hpp"
-#include "ast/expressions/integer.hpp"
-
-#include <doctest.h>
-
 namespace test::utils {
-    void check_parser_errors(const std::vector<ast::error::error*>& errors) {
-        if (errors.empty())
-            return;
-
-        INFO("parser has " << errors.size() << " errors:");
-        std::ostringstream combined;
-        for (auto& err : errors)
-            combined << "  > " << err->what() << '\n';
-
-        INFO(combined.str());
-
-        FAIL("Parser had errors.");
-    }
-
-    void ParserFixture::setup(std::string source) {
-        input.clear();
-        input << source;
-        lexer = std::make_unique<lexer::lexer>(input);
-        parser = std::make_unique<parser::parser>(*lexer);
-        program = parser->parse_program();
-        check_parser_errors(parser->errors);
-
-        REQUIRE_MESSAGE(
-            program != nullptr,
-            "parse_program() returned a null pointer"
-        );
-    }
 
     void test_identifier(ast::expression* expr, std::string value) {
         ast::identifier* ident = cast<ast::identifier>(expr);
@@ -120,9 +86,9 @@ namespace test::utils {
             "parse_program() returned a null pointer"
         );
         REQUIRE(program->statements.size() >= n_good_statements);
-        //                      ^^ because even though you were thinking
-        // about a specific number of statements to be there, it failing for
-        // `expect_next` might trigger a sub-expression to be triggered
-        // correctly and be parsed as the expression_stmt
+        //                                 ^^ because even though you were
+        // thinking about a specific number of statements to be there, it
+        // failing for `expect_next` might trigger a sub-expression to be
+        // triggered correctly and be parsed as the expression_stmt
     }
 } // namespace test::utils
