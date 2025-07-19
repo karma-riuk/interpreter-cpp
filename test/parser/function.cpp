@@ -10,77 +10,89 @@
 TEST_SUITE("Parser: function literal") {
     TEST_CASE("Malformed function literal (checking for memory leaks)") {
         SUBCASE("Missing opening paren no param") {
-            test_failing_parsing("fn ) { return 2; }", {token::type::LPAREN});
+            test::utils::test_failing_parsing(
+                "fn ) { return 2; }",
+                {token::type::LPAREN}
+            );
         }
         SUBCASE("Missing opening paren one param") {
-            test_failing_parsing("fn x) { return 2; }", {token::type::LPAREN});
+            test::utils::test_failing_parsing(
+                "fn x) { return 2; }",
+                {token::type::LPAREN}
+            );
         }
         SUBCASE("Missing opening paren two param") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn x, y) { return 2; }",
                 {token::type::LPAREN}
             );
         }
 
         SUBCASE("Missing identifier with no closing paren - no param") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn ( { return 2; }",
                 {token::type::IDENTIFIER}
             );
         }
 
         SUBCASE("Missing identifier with no closing paren - one param") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x, { return 2; }",
                 {token::type::IDENTIFIER}
             );
         }
         SUBCASE("Missing identifier with no closing paren - two params") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x, y, { return 2; }",
                 {token::type::IDENTIFIER}
             );
         }
 
         SUBCASE("Missing identifier with closing paren - one param") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x,) { return 2; }",
                 {token::type::IDENTIFIER}
             );
         }
         SUBCASE("Missing identifier with closing paren - two params") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x,y,) { return 2; }",
                 {token::type::IDENTIFIER}
             );
         }
 
         SUBCASE("Missing closing paren one param") {
-            test_failing_parsing("fn (x { return 2; }", {token::type::RPAREN});
+            test::utils::test_failing_parsing(
+                "fn (x { return 2; }",
+                {token::type::RPAREN}
+            );
         }
         SUBCASE("Missing closing paren two params") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x, y { return 2; }",
                 {token::type::RPAREN}
             );
         }
 
         SUBCASE("Missing opening brace") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x, y)  return x + y; }",
                 {token::type::LBRACE}
             );
         }
 
         SUBCASE("Missing closing brace") {
-            test_failing_parsing(
+            test::utils::test_failing_parsing(
                 "fn (x, y) { return x + y; ",
                 {token::type::RBRACE}
             );
         }
     }
 
-    TEST_CASE_FIXTURE(ParserFixture, "Parse well formed function literal") {
+    TEST_CASE_FIXTURE(
+        test::utils::ParserFixture,
+        "Parse well formed function literal"
+    ) {
         SUBCASE("no param function") {
             setup("\
 fn () {\
@@ -91,10 +103,10 @@ fn () {\
             CHECK(program->statements[0]->token_literal() == "fn");
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_literal* fun =
-                cast<ast::function_literal>(expr_stmt->expression);
+                test::utils::cast<ast::function_literal>(expr_stmt->expression);
 
             // parameters
             CHECK(fun->parameters.size() == 0);
@@ -102,8 +114,8 @@ fn () {\
             // block
             REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->body->statements[0]);
-            test_boolean_literal(ret->value, true);
+                test::utils::cast<ast::return_stmt>(fun->body->statements[0]);
+            test::utils::test_boolean_literal(ret->value, true);
 
             // full string
             CHECK(fun->str() == "fn (){return true;}");
@@ -119,20 +131,20 @@ fn (x) {\
             CHECK(program->statements[0]->token_literal() == "fn");
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_literal* fun =
-                cast<ast::function_literal>(expr_stmt->expression);
+                test::utils::cast<ast::function_literal>(expr_stmt->expression);
 
             // parameters
             REQUIRE(fun->parameters.size() == 1);
-            test_identifier(fun->parameters[0], "x");
+            test::utils::test_identifier(fun->parameters[0], "x");
 
             // block
             REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->body->statements[0]);
-            test_infix_expression(ret->value, "x", "+", 1);
+                test::utils::cast<ast::return_stmt>(fun->body->statements[0]);
+            test::utils::test_infix_expression(ret->value, "x", "+", 1);
 
             // full string
             CHECK(fun->str() == "fn (x){return (x + 1);}");
@@ -148,21 +160,21 @@ fn (x, y) {\
             CHECK(program->statements[0]->token_literal() == "fn");
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_literal* fun =
-                cast<ast::function_literal>(expr_stmt->expression);
+                test::utils::cast<ast::function_literal>(expr_stmt->expression);
 
             // parameters
             REQUIRE(fun->parameters.size() == 2);
-            test_identifier(fun->parameters[0], "x");
-            test_identifier(fun->parameters[1], "y");
+            test::utils::test_identifier(fun->parameters[0], "x");
+            test::utils::test_identifier(fun->parameters[1], "y");
 
             // block
             REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->body->statements[0]);
-            test_infix_expression(ret->value, "x", "+", "y");
+                test::utils::cast<ast::return_stmt>(fun->body->statements[0]);
+            test::utils::test_infix_expression(ret->value, "x", "+", "y");
 
             // full string
             CHECK(fun->str() == "fn (x, y){return (x + y);}");
@@ -178,26 +190,26 @@ let fun = fn (x, y) {\
             CHECK(program->statements[0]->token_literal() == "let");
 
             ast::let_stmt* let_stmt =
-                cast<ast::let_stmt>(program->statements[0]);
+                test::utils::cast<ast::let_stmt>(program->statements[0]);
 
             // let lhs
-            test_identifier(let_stmt->name, "fun");
+            test::utils::test_identifier(let_stmt->name, "fun");
 
             // let rhs
             CHECK(let_stmt->value->token_literal() == "fn");
             ast::function_literal* fun =
-                cast<ast::function_literal>(let_stmt->value);
+                test::utils::cast<ast::function_literal>(let_stmt->value);
 
             // parameters
             REQUIRE(fun->parameters.size() == 2);
-            test_identifier(fun->parameters[0], "x");
-            test_identifier(fun->parameters[1], "y");
+            test::utils::test_identifier(fun->parameters[0], "x");
+            test::utils::test_identifier(fun->parameters[1], "y");
 
             // block
             REQUIRE(fun->body->statements.size() == 1);
             ast::return_stmt* ret =
-                cast<ast::return_stmt>(fun->body->statements[0]);
-            test_infix_expression(ret->value, "x", "+", "y");
+                test::utils::cast<ast::return_stmt>(fun->body->statements[0]);
+            test::utils::test_infix_expression(ret->value, "x", "+", "y");
 
             // full string
             CHECK(fun->str() == "fn (x, y){return (x + y);}");
@@ -219,10 +231,10 @@ TEST_SUITE("Parser: function call") {
             // Check for errors
             REQUIRE(p.errors.size() == 2);
             ast::error::unkown_prefix* up =
-                cast<ast::error::unkown_prefix>(p.errors[0]);
+                test::utils::cast<ast::error::unkown_prefix>(p.errors[0]);
             REQUIRE(up->prefix.type == token::type::SEMICOLON);
             ast::error::expected_next* en =
-                cast<ast::error::expected_next>(p.errors[1]);
+                test::utils::cast<ast::error::expected_next>(p.errors[1]);
             REQUIRE(en->expected_type == token::type::RPAREN);
 
 
@@ -233,31 +245,43 @@ TEST_SUITE("Parser: function call") {
             );
         }
         SUBCASE("missing closing 1 param function") {
-            test_failing_parsing("value(x;", {token::type::RPAREN});
+            test::utils::test_failing_parsing(
+                "value(x;",
+                {token::type::RPAREN}
+            );
         }
 
         SUBCASE("missing closing 2 param function") {
-            test_failing_parsing("value(x, y;", {token::type::RPAREN});
+            test::utils::test_failing_parsing(
+                "value(x, y;",
+                {token::type::RPAREN}
+            );
         }
 
         SUBCASE("missing comma between 2 param function") {
-            test_failing_parsing("value(x y);", {token::type::RPAREN});
+            test::utils::test_failing_parsing(
+                "value(x y);",
+                {token::type::RPAREN}
+            );
         }
     }
 
-    TEST_CASE_FIXTURE(ParserFixture, "Parse well formed function call") {
+    TEST_CASE_FIXTURE(
+        test::utils::ParserFixture,
+        "Parse well formed function call"
+    ) {
         SUBCASE("no param function") {
             setup("value();");
             REQUIRE(program->statements.size() == 1);
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_call* fun =
-                cast<ast::function_call>(expr_stmt->expression);
+                test::utils::cast<ast::function_call>(expr_stmt->expression);
 
             // target
-            test_identifier(fun->target, "value");
+            test::utils::test_identifier(fun->target, "value");
 
             // parameters
             CHECK(fun->parameters.size() == 0);
@@ -271,17 +295,17 @@ TEST_SUITE("Parser: function call") {
             REQUIRE(program->statements.size() == 1);
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_call* fun =
-                cast<ast::function_call>(expr_stmt->expression);
+                test::utils::cast<ast::function_call>(expr_stmt->expression);
 
             // target
-            test_identifier(fun->target, "is_odd");
+            test::utils::test_identifier(fun->target, "is_odd");
 
             // parameters
             CHECK(fun->parameters.size() == 1);
-            test_integer_literal(fun->parameters[0], 1);
+            test::utils::test_integer_literal(fun->parameters[0], 1);
 
             // full string
             CHECK(fun->str() == "is_odd(1)");
@@ -292,18 +316,23 @@ TEST_SUITE("Parser: function call") {
             REQUIRE(program->statements.size() == 1);
 
             ast::expression_stmt* expr_stmt =
-                cast<ast::expression_stmt>(program->statements[0]);
+                test::utils::cast<ast::expression_stmt>(program->statements[0]);
 
             ast::function_call* fun =
-                cast<ast::function_call>(expr_stmt->expression);
+                test::utils::cast<ast::function_call>(expr_stmt->expression);
 
             // target
-            test_identifier(fun->target, "is_gt");
+            test::utils::test_identifier(fun->target, "is_gt");
 
             // parameters
             CHECK(fun->parameters.size() == 2);
-            test_integer_literal(fun->parameters[0], 1);
-            test_infix_expression(fun->parameters[1], "a", "+", 10);
+            test::utils::test_integer_literal(fun->parameters[0], 1);
+            test::utils::test_infix_expression(
+                fun->parameters[1],
+                "a",
+                "+",
+                10
+            );
 
             // full string
             CHECK(fun->str() == "is_gt(1, (a + 10))");
@@ -314,20 +343,26 @@ TEST_SUITE("Parser: function call") {
             REQUIRE(program->statements.size() == 1);
 
             ast::let_stmt* let_stmt =
-                cast<ast::let_stmt>(program->statements[0]);
+                test::utils::cast<ast::let_stmt>(program->statements[0]);
 
-            test_identifier(let_stmt->name, "res");
+            test::utils::test_identifier(let_stmt->name, "res");
 
-            ast::function_call* fun = cast<ast::function_call>(let_stmt->value);
+            ast::function_call* fun =
+                test::utils::cast<ast::function_call>(let_stmt->value);
 
             // target
-            test_identifier(fun->target, "add");
+            test::utils::test_identifier(fun->target, "add");
 
             // parameters
             CHECK(fun->parameters.size() == 3);
-            test_integer_literal(fun->parameters[0], 1);
-            test_infix_expression(fun->parameters[1], "a", "+", 10);
-            test_infix_expression(fun->parameters[2], 2, "*", 3);
+            test::utils::test_integer_literal(fun->parameters[0], 1);
+            test::utils::test_infix_expression(
+                fun->parameters[1],
+                "a",
+                "+",
+                10
+            );
+            test::utils::test_infix_expression(fun->parameters[2], 2, "*", 3);
 
             // full string
             CHECK(fun->str() == "add(1, (a + 10), (2 * 3))");

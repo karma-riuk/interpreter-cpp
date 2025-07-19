@@ -3,6 +3,7 @@
 # -------------------------------------------------------------------
 CXX       := g++
 CXXFLAGS  := -std=c++17 -Wall -Wextra -Iinclude -Isrc -MMD -MP
+CXXFLAGS_TESTS  := -Itest/utils
 LDFLAGS   :=
 SRC_DIR   := src
 TEST_DIR  := test
@@ -70,7 +71,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 $(OBJ_DIR)/test/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS_TESTS) -c $< -o $@
 
 # -------------------------------------------------------------------
 # Auto‐include dependencies

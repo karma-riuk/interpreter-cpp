@@ -3,7 +3,7 @@
 #include <doctest.h>
 
 TEST_SUITE("Parser: return") {
-    TEST_CASE_FIXTURE(ParserFixture, "Parse return statement") {
+    TEST_CASE_FIXTURE(test::utils::ParserFixture, "Parse return statement") {
         setup("\
 return 5;\
 return 10;\
@@ -15,7 +15,7 @@ return 12 + 34;\
 
         for (const auto stmt : program->statements) {
             CHECK(stmt->token_literal() == "return");
-            cast<ast::return_stmt>(stmt);
+            test::utils::cast<ast::return_stmt>(stmt);
         }
     }
 }
